@@ -19,4 +19,7 @@
   --grad-primary: linear-gradient(135deg, var(--color-primary), var(--color-primary-accent));
   --grad-secondary: linear-gradient(135deg, var(--color-secondary), var(--color-secondary-accent));
   --grad-tertiary: linear-gradient(135deg, var(--color-tertiary), var(--color-tertiary-accent));
+
+
+  --grad-header: linear-gradient(135deg, var(--color-bg-darker), #053b68);
 }
