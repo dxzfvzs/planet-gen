@@ -1,17 +1,22 @@
 :root {
-  --color-bg: #235290; /* main bg */
-  --color-bg-darker: #094a82; /* header, footer etc */
-  --color-surface: #FFFFFF;     /* cards */
+  --color-bg: #235290;
+  --color-bg-darker: #094a82;
+  --color-surface: #FFFFFF;
 
   --color-text: #2A2A2A;
-  --color-text-soft: #6B6B6B;
-  --color-border: #E8E2D9;
 
-  --color-primary: #FFB703;     /* sunny yellow */
-  --color-secondary: #8ECAE6;   /* sky blue */
-  --color-accent: #FB8500;      /* orange pop */
+  --color-success: #4c9816;
+  --color-mid: #edb837;
+  --color-fail: #c8103b;
 
-  --color-success: #4c9816;     /* green */
-  --color-mid: #FFD166;         /* soft yellow (neutral feedback) */
-  --color-fail: #EF476F;        /* friendly red */
+  --color-primary: #FFB703;
+  --color-primary-accent: #FB8500;
+  --color-secondary: #6fc630;
+  --color-secondary-accent: #4c9816;
+  --color-tertiary: #5abcec;
+  --color-tertiary-accent: #3297c6;
+
+  --grad-primary: linear-gradient(135deg, var(--color-primary), var(--color-primary-accent));
+  --grad-secondary: linear-gradient(135deg, var(--color-secondary), var(--color-secondary-accent));
+  --grad-tertiary: linear-gradient(135deg, var(--color-tertiary), var(--color-tertiary-accent));
 }

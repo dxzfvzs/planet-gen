@@ -1,13 +1,17 @@
-import MenuCard from "../components/MenuCard.tsx";
-import { Book, Pen } from "lucide-react";
+import MenuCard from "../components/MenuCard";
+import { Book, Notebook, PenTool } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="rounded justify-items-center">
-      <h1 className="text-4xl font-black text-white py-2 px-5 rounded mb-10">Co to dneska bude?</h1>
-      <div className="flex gap-5 ">
-        <MenuCard icon={Pen} label={"Lekce"} link={"/lessons"}/>
-        <MenuCard icon={Book} label={"Opakování"} link={"/cards"}/>
+    <div className="flex flex-col items-center justify-center m-auto">
+      <h1 className="text-4xl font-extrabold text-white mb-10">
+        Co to dneska bude?
+      </h1>
+
+      <div className="flex gap-6 flex-wrap">
+        <MenuCard icon={Book} label="Lekce" link="/lessons" variant="lesson" />
+        <MenuCard icon={PenTool} label="Cvičení" link="/test" variant="exercise" />
+        <MenuCard icon={Notebook} label="Opakování" link="/cards" variant="review" />
       </div>
     </div>
   );
