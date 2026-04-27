@@ -5,12 +5,14 @@ import Home from "./pages/Home.tsx";
 import Lessons from "./pages/Lessons.tsx";
 import Cards from "./pages/Cards.tsx";
 import Header from "./components/Header.tsx";
+import Starfield from "./components/Starfield.tsx";
 
 function App() {
 
   return (
     <>
       <Header/>
+      <Starfield count={1500} />
       <main>
         <Routes>
           <Route path="/" element={<Home/>}/>
