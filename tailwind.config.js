@@ -9,6 +9,7 @@ module.exports = {
       colors: {
         bg: "var(--color-bg)",
         "bg-darker": "var(--color-bg-darker)",
+        "bg-content": "var(--color-bg-content)",
         surface: "var(--color-surface)",
         text: "var(--color-text)",
         "text-soft": "var(--color-text-soft)",

@@ -37,11 +37,6 @@ main {
   margin: 3em auto;
 }
 
-/* misc */
-.rounded {
-  border-radius: 6px;
-}
-
 a {
   text-decoration: none;
   color: var(--color-text);
