@@ -3,14 +3,14 @@ import { Jiggle, RotateToFollowSun } from "./Rotation.tsx";
 
 const RINGS: Ring[] = [
   { cx: 0, cy: 2.5, rx: 37, ry: 4, stroke: "#b38006", strokeWidth: 1, fill: "none", strokeOpacity: 0.85 },
-  { cx: 0, cy: 2.5, rx: 44, ry: 6, stroke: "#ef8714", strokeWidth: 1, fill: "none", strokeOpacity: 0.55 },
-  { cx: 0, cy: 2.5, rx: 58, ry: 8, stroke: "#edcc7a", strokeWidth: 0.6, fill: "none", strokeOpacity: 0.75 },
-  { cx: 0, cy: 2.5, rx: 65, ry: 10, stroke: "#b38006", strokeWidth: 0.6, fill: "none", strokeOpacity: 0.75 },
+  { cx: 0, cy: 2.5, rx: 44, ry: 6, stroke: "#ef8714", strokeWidth: 1.5, fill: "none", strokeOpacity: 0.55 },
+  { cx: 0, cy: 2.5, rx: 58, ry: 8, stroke: "#edcc7a", strokeWidth: 1, fill: "none", strokeOpacity: 0.75 },
+  { cx: 0, cy: 2.5, rx: 65, ry: 10, stroke: "#b38006", strokeWidth: 0.9, fill: "none", strokeOpacity: 0.75 },
 ];
 
 export function YellowPlanet({ planetSize = 25 }: { planetSize?: number }) {
   return (
-    <svg width="220" height="220" viewBox="-35 -35 70 70" overflow="visible">
+    <svg width="220" height="220" viewBox="-50 -50 100 100" overflow="visible">
       <defs>
         <radialGradient id="yellowPlanetBase" cx="35%" cy="28%" r="62%">
           <stop offset="0%" stopColor="#edcc7a"/>

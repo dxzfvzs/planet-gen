@@ -10,7 +10,6 @@ const RINGS: Ring[] = [
 export function PurplePlanet({ planetSize = 30 }: { planetSize?: number }) {
   return (
     <svg width="220" height="220" viewBox="-50 -50 100 100" overflow="visible">
-
       <defs>
         <radialGradient id="purplePlanetBase" cx="35%" cy="28%" r="62%">
           <stop offset="5%" stopColor="#b57aee"/>
@@ -71,17 +70,19 @@ export function PurplePlanet({ planetSize = 30 }: { planetSize?: number }) {
         <Jiggle duration={20} angle={15}>
           <g mask="url(#purplePlanetOcclusionMask)">
             <Moon
+              id={"purple-1"}
               orbitRx={55} orbitRy={15} orbitTilt={-3}
               radius={2.8}
               duration="7s" begin={-6.2}
-              baseId="moonBase" shadowId="moonShadow"
+              baseId="moonBase"
             />
 
             <Moon
+              id={"purple-2"}
               orbitRx={45} orbitRy={10} orbitTilt={16}
               radius={5.5}
               duration="6s" begin={-6}
-              baseId="tinyMoonBase" shadowId="moonShadow"
+              baseId="moonBase"
             />
           </g>
         </Jiggle>

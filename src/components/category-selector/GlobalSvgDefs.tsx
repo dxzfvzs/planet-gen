@@ -18,7 +18,6 @@ export function GlobalSvgDefs() {
           <feGaussianBlur stdDeviation="1.8"/>
         </filter>
 
-
         {/* Moon base color.*/}
         <radialGradient id="moonBase" cx="32%" cy="28%" r="70%">
           <stop offset="0%" stopColor="#ffffff"/>
@@ -31,12 +30,6 @@ export function GlobalSvgDefs() {
           <stop offset="0%" stopColor="#e0d8ff"/>
           <stop offset="60%" stopColor="#9070c0"/>
           <stop offset="100%" stopColor="#2a1860"/>
-        </radialGradient>
-
-        {/* Shadow of the moon for spins.*/}
-        <radialGradient id="moonShadow" cx="75%" cy="68%" r="60%">
-          <stop offset="0%" stopColor="#06001e" stop-opacity="0.75"/>
-          <stop offset="100%" stopColor="#06001e" stop-opacity="0"/>
         </radialGradient>
       </defs>
     </svg>

@@ -8,8 +8,8 @@ type MoonProps = {
   orbitOffsetY?: number
   radius: number
   duration: string
+  id: string
   begin?: number
-  shadowId: string
   baseId: string
 }
 
@@ -24,10 +24,11 @@ export function Moon(
     orbitOffsetY = 0,
     radius,
     duration,
+    id,
     begin = 0,
     baseId = "moonBase",
   }: MoonProps) {
-  const orbitId = `orbit-${baseId}`
+  const orbitId = `orbit-${id}-${baseId}`
   const d = `M 0 0 m ${-orbitRx + orbitOffsetX} ${orbitOffsetY} a ${orbitRx} ${orbitRy} ${orbitTilt} 1 1 ${orbitRx * 2} 0 a ${orbitRx} ${orbitRy} ${orbitTilt} 1 1 ${-orbitRx * 2} 0`
 
   return (
