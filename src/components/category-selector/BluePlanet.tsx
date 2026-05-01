@@ -1,27 +1,62 @@
+const RING = {
+  cx: -1,
+  cy: 2.5,
+  rx: 30,
+  ry: 7,
+  stroke: "#60c0ff",
+  strokeWidth: 2.5,
+  fill: "none",
+  strokeOpacity: 0.65,
+} as const;
+
+const RING_ROTATION = -30;
+
 export function BluePlanet() {
   return (
-    <svg width="60" height="60" viewBox="0 0 60 60" overflow="visible">
+    <svg width="220" height="220" viewBox="-35 -35 70 70" overflow="visible">
       <defs>
         <radialGradient id="bg" cx="35%" cy="28%" r="62%">
           <stop offset="0%" stopColor="#a0e4ff"/>
           <stop offset="52%" stopColor="#1868d8"/>
           <stop offset="100%" stopColor="#061e60"/>
         </radialGradient>
-        <clipPath id="bc">
-          <circle cx="30" cy="30" r="19"/>
-        </clipPath>
+
+        <linearGradient
+          id="ringFade"
+          gradientUnits="userSpaceOnUse"
+          x1="-35"
+          y1="0"
+          x2="35"
+          y2="0"
+        >
+          <stop offset="0%" stopColor="black" stopOpacity="0"/>
+          <stop offset="20%" stopColor="white" stopOpacity="1"/>
+          <stop offset="80%" stopColor="white" stopOpacity="1"/>
+          <stop offset="100%" stopColor="black" stopOpacity="0"/>
+        </linearGradient>
+
+        <mask id="ringFadeMask">
+          <rect x="-100" y="-100" width="200" height="200" fill="url(#ringFade)"/>
+        </mask>
       </defs>
-      {/* ring back, tilted */}
-      <ellipse cx="30" cy="38" rx="30" ry="7" stroke="#60c0ff" strokeWidth="2.5" fill="none"
-               strokeOpacity="0.45" transform="rotate(-30,30,38)"
-               strokeDasharray="94 94" strokeDashoffset="-94"/>
-      <circle cx="30" cy="30" r="19" fill="url(#bg)"/>
-      <rect x="11" y="35" width="38" height="5" fill="rgba(0,20,90,0.3)" clipPath="url(#bc)" rx="2"/>
-      <ellipse cx="22" cy="23" rx="6" ry="4" fill="rgba(255,255,255,0.2)"/>
-      {/* ring front */}
-      <ellipse cx="30" cy="38" rx="30" ry="7" stroke="#60c0ff" strokeWidth="2.5" fill="none"
-               strokeOpacity="0.65" transform="rotate(-30,30,38)"
-               strokeDasharray="94 94" strokeDashoffset="0"/>
+
+      {/* BACK RING (behind planet) */}
+      <g transform={`rotate(${RING_ROTATION})`}>
+        <ellipse {...RING} />
+      </g>
+
+      {/* PLANET (middle layer) */}
+      <circle cx="0" cy="0" r="19" fill="url(#bg)"/>
+
+      {/* FRONT RING (in front of planet) */}
+      <g transform={`rotate(${RING_ROTATION})`}>
+        <ellipse
+          {...RING}
+          strokeDasharray="80 200"
+          strokeDashoffset="20"
+          mask="url(#ringFadeMask)"
+        />
+      </g>
     </svg>
   );
 }
