@@ -21,16 +21,10 @@ export function GlobalSvgDefs() {
         {/* Moon base color.*/}
         <radialGradient id="moonBase" cx="32%" cy="28%" r="70%">
           <stop offset="0%" stopColor="#ffffff"/>
-          <stop offset="55%" stopColor="#c8c0ff"/>
-          <stop offset="100%" stopColor="#6050a0"/>
+          <stop offset="55%" stopColor="#c5c9cc"/>
+          <stop offset="100%" stopColor="#1d2732"/>
         </radialGradient>
 
-        {/* Alternative moon base color.*/}
-        <radialGradient id="tinyMoonBase" cx="32%" cy="28%" r="70%">
-          <stop offset="0%" stopColor="#e0d8ff"/>
-          <stop offset="60%" stopColor="#9070c0"/>
-          <stop offset="100%" stopColor="#2a1860"/>
-        </radialGradient>
       </defs>
     </svg>
   );

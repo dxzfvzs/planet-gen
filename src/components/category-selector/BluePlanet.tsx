@@ -30,8 +30,7 @@ export function BluePlanet({ planetSize = 25 }: { planetSize?: number }) {
         <circle cx="0" cy="0" r={planetSize} fill="url(#bluePlanetBase)"/>
       </RotateToFollowSun>
 
-      <RotatingGroup duration={87} invertRotation>
-
+      <RotatingGroup duration={125} invertRotation>
         <Jiggle duration={20} angle={1}>
           <g clipPath="url(#bluePlanetClip)" filter="url(#bandBlur)">
             <ellipse cx="0" cy="8" rx="50" ry="5" fill="#4a1288" opacity="0.38"/>

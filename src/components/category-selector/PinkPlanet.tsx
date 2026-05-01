@@ -62,34 +62,18 @@ export function PinkPlanet({ planetSize = 20 }: { planetSize?: number }) {
         {RINGS.map((r, i) => (
           <ellipse key={`${i}`}{...r} fill="none" mask="url(#pinkPlanetOcclusionMask)"/>
         ))}
-
-        <g mask="url(#pinkPlanetOcclusionMask)">
-          <Moon
-            id={"pink-1"}
-            orbitRx={30} orbitRy={8} orbitTilt={9}
-            radius={2.8}
-            duration="7s" begin={-6.5}
-            baseId="moonBase"
-          />
-
-          <Moon
-            id={"pink-2"}
-            orbitRx={24} orbitRy={10} orbitTilt={-40}
-            radius={3.8}
-            duration="12s" begin={-9}
-            baseId="moonBase"
-          />
-
-          <Moon
-            id={"pink-3"}
-            orbitRx={30} orbitRy={11} orbitTilt={30}
-            radius={5.5}
-            duration="5s" begin={-5}
-            baseId="moonBase"
-          />
-
-        </g>
       </RotatingGroup>
+
+      <g mask="url(#pinkPlanetOcclusionMask)">
+        <Moon
+          id={"pink-1"}
+          orbitRx={30} orbitRy={8} orbitTilt={9}
+          radius={2.8}
+          duration="7s" begin={-6.5}
+          baseId="moonBase"
+        />
+      </g>
+
 
     </svg>
   );
