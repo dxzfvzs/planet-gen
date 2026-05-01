@@ -4,7 +4,7 @@ import { StoryTestRunner } from "../components/test/TestRunner.tsx";
 
 import { vyjm_b } from "../structure/content/tests/vyjm_b.tsx";
 import { type CategoryKey, categoryMap } from "../structure/types/categories.ts";
-import { SpaceCategorySelector } from "../components/CategorySelector.tsx";
+import { SpaceCategorySelector } from "../components/category-selector/CategorySelector.tsx";
 import type { StoryTest } from "../structure/types/test.ts";
 
 type Test = {
