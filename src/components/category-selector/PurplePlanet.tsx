@@ -91,6 +91,7 @@ export function PurplePlanet({ planetSize = 30 }: { planetSize?: number }) {
               radius={2.8}
               duration="7s" begin={-6.2}
               baseId="moonBase"
+              color={"#ffb8e8"}
             />
 
             <Moon
@@ -99,6 +100,7 @@ export function PurplePlanet({ planetSize = 30 }: { planetSize?: number }) {
               radius={5.5}
               duration="6s" begin={-6}
               baseId="moonBase"
+              color={"#e1a3ec"}
             />
           </g>
         </Jiggle>

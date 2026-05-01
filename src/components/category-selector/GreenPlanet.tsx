@@ -82,7 +82,7 @@ export function GreenPlanet({ planetSize = 20 }: { planetSize?: number }) {
           id={"green-1"}
           orbitRx={30} orbitRy={11} orbitTilt={30}
           radius={3.5}
-          duration="30s" begin={-5}
+          duration="30s" begin={-2}
           baseId="moonBase"
         />
       </g>

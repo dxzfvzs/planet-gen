@@ -87,6 +87,7 @@ export function PinkPlanet({ planetSize = 20 }: { planetSize?: number }) {
           radius={2.8}
           duration="7s" begin={-6.5}
           baseId="moonBase"
+          color={"#ffb8cd"}
         />
       </g>
 
