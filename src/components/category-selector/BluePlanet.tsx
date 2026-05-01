@@ -1,8 +1,8 @@
 import type { Ring } from "./ring.ts";
-import { RotatingRingGroup } from "./Rotation.tsx";
+import { RotateToFollowSun, RotatingGroup } from "./Rotation.tsx";
 
 const RINGS: Ring[] = [
-  { cx: 0, cy: 2.5, rx: 37, ry: 7, stroke: "#61bdef", strokeWidth: 2, fill: "none", strokeOpacity: 0.65 },
+  { cx: 0, cy: 2.5, rx: 37, ry: 7, stroke: "#61bdef", strokeWidth: 1, fill: "none", strokeOpacity: 0.65 },
   { cx: 0, cy: 2.5, rx: 44, ry: 11, stroke: "#61bdef", strokeWidth: 2.5, fill: "none", strokeOpacity: 0.35 },
 ];
 
@@ -14,7 +14,7 @@ export function BluePlanet({ planetSize = 25 }: { planetSize?: number }) {
   return (
     <svg width="220" height="220" viewBox="-50 -50 100 100" overflow="visible">
       <defs>
-        <radialGradient id="planet" cx="35%" cy="28%" r="62%">
+        <radialGradient id="bluePlanetBase" cx="35%" cy="28%" r="62%">
           <stop offset="0%" stopColor="#a0e4ff"/>
           <stop offset="52%" stopColor="#1868d8"/>
           <stop offset="100%" stopColor="#061e60"/>
@@ -32,7 +32,7 @@ export function BluePlanet({ planetSize = 25 }: { planetSize?: number }) {
         </mask>
       </defs>
 
-      <RotatingRingGroup duration={140}>
+      <RotatingGroup duration={140}>
         <g>
           {RINGS.map((r, i) => (
             <ellipse
@@ -42,11 +42,13 @@ export function BluePlanet({ planetSize = 25 }: { planetSize?: number }) {
             />
           ))}
         </g>
-      </RotatingRingGroup>
+      </RotatingGroup>
 
-      <circle cx="0" cy="0" r={planetSize} fill="url(#planet)"/>
+      <RotateToFollowSun>
+        <circle cx="0" cy="0" r={planetSize} fill="url(#bluePlanetBase)"/>
+      </RotateToFollowSun>
 
-      <RotatingRingGroup duration={140}>
+      <RotatingGroup duration={140}>
         <g>
           {RINGS.map((r, i) => (
             <ellipse
@@ -59,7 +61,7 @@ export function BluePlanet({ planetSize = 25 }: { planetSize?: number }) {
             />
           ))}
         </g>
-      </RotatingRingGroup>
+      </RotatingGroup>
     </svg>
   );
 }

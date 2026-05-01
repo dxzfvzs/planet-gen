@@ -1,3 +1,5 @@
+import { RotateToFollowSun } from "./Rotation.tsx";
+
 type MoonProps = {
   orbitRx: number
   orbitRy: number
@@ -6,12 +8,12 @@ type MoonProps = {
   orbitOffsetY?: number
   radius: number
   duration: string
-  begin?: string
+  begin?: number
   shadowId: string
   baseId: string
 }
 
-const debug = true;
+const debug = false;
 
 export function Moon(
   {
@@ -22,8 +24,8 @@ export function Moon(
     orbitOffsetY = 0,
     radius,
     duration,
-    begin = "0s",
-    baseId,
+    begin = 0,
+    baseId = "moonBase",
   }: MoonProps) {
   const orbitId = `orbit-${baseId}`
   const d = `M 0 0 m ${-orbitRx + orbitOffsetX} ${orbitOffsetY} a ${orbitRx} ${orbitRy} ${orbitTilt} 1 1 ${orbitRx * 2} 0 a ${orbitRx} ${orbitRy} ${orbitTilt} 1 1 ${-orbitRx * 2} 0`
@@ -35,20 +37,21 @@ export function Moon(
         : <path id={orbitId} d={d} fill="none"/>
       }
       <g>
-        <animateMotion dur={duration} repeatCount="indefinite" begin={begin}>
+        <animateMotion dur={duration} repeatCount="indefinite" begin={`${begin}s`}>
           <mpath href={`#${orbitId}`}/>
         </animateMotion>
-        <circle r={radius} fill={`url(#${baseId})`}/>
-        <circle r={radius} fill="#06001e" opacity="0.0">
-          <animate
-            attributeName="opacity"
-            values="0.70;0.60;0;0;0;0;0.60;0.70"
-            keyTimes="0;0.15;0.25;0.35;0.65;0.75;0.85;1"
-            dur={duration}
-            repeatCount="indefinite"
-          />
-        </circle>
-        <circle r={radius} fill={`url(#moonShadow)`} opacity="0.65"/>
+        <RotateToFollowSun>
+          <circle r={radius} fill={`url(#${baseId})`}/>
+          <circle r={radius} fill="#06001e" opacity="0.0">
+            <animate
+              attributeName="opacity"
+              values="0;0;0.7;0.7;0;0"
+              keyTimes="0;0.2;0.25;0.45;0.65;1"
+              dur={duration}
+              repeatCount="indefinite"
+            />
+          </circle>
+        </RotateToFollowSun>
       </g>
     </g>
   )

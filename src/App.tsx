@@ -7,11 +7,13 @@ import Tests from "./pages/Tests.tsx";
 import Cards from "./pages/Cards.tsx";
 import Header from "./components/Header.tsx";
 import Starfield from "./components/Starfield.tsx";
+import { GlobalSvgDefs } from "./components/category-selector/GlobalSvgDefs.tsx";
 
 function App() {
 
   return (
     <>
+      <GlobalSvgDefs/>
       <Header/>
       <Starfield count={1500} />
       <main>
