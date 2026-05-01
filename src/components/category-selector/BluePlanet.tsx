@@ -1,13 +1,13 @@
-const RING = {
-  cx: -1,
-  cy: 2.5,
-  rx: 30,
-  ry: 7,
-  stroke: "#60c0ff",
-  strokeWidth: 2.5,
-  fill: "none",
-  strokeOpacity: 0.65,
-} as const;
+import type { Ring } from "./ring.ts";
+
+const RINGS: Ring[] = [
+  { cx: -1, cy: 2.5, rx: 37, ry: 7, stroke: "#61bdef", strokeWidth: 1.5, fill: "none", strokeOpacity: 0.65 },
+  { cx: -1, cy: 2.5, rx: 41, ry: 10, stroke: "#47c0fd", strokeWidth: 2.5, fill: "none", strokeOpacity: 0.55 },
+];
+
+function ringDash(rx: number) {
+  return `${(rx / 30) * 80} 200`;
+}
 
 const RING_ROTATION = -30;
 
@@ -40,22 +40,33 @@ export function BluePlanet() {
         </mask>
       </defs>
 
-      {/* BACK RING (behind planet) */}
-      <g transform={`rotate(${RING_ROTATION})`}>
-        <ellipse {...RING} />
+      {/* back rings */}
+      <g transform={`rotate(${RING_ROTATION})`} >
+        {RINGS.map((r, i) => (
+          <ellipse
+            {...r}
+            key={`back-${i}`}
+            fill="none"
+            strokeOpacity={r.strokeOpacity * 0.5}
+          />
+        ))}
       </g>
 
-      {/* PLANET (middle layer) */}
+      {/* planet */}
       <circle cx="0" cy="0" r="19" fill="url(#bg)"/>
 
-      {/* FRONT RING (in front of planet) */}
+      {/* front ring */}
       <g transform={`rotate(${RING_ROTATION})`}>
-        <ellipse
-          {...RING}
-          strokeDasharray="80 200"
-          strokeDashoffset="20"
-          mask="url(#ringFadeMask)"
-        />
+        {RINGS.map((r, i) => (
+          <ellipse
+            {...r}
+            key={`front-${i}`}
+            fill="none"
+            mask="url(#ringFadeMask)"
+            strokeDasharray={ringDash(r.rx)}
+            strokeDashoffset={20}
+          />
+        ))}
       </g>
     </svg>
   );
