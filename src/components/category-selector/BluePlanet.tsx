@@ -1,34 +1,26 @@
 import type { Ring } from "./ring.ts";
+import { RotatingViaSunGroup, RotatingRingGroup } from "./Rotation.tsx";
 
 const RINGS: Ring[] = [
-  { cx: -1, cy: 2.5, rx: 37, ry: 7, stroke: "#61bdef", strokeWidth: 1.5, fill: "none", strokeOpacity: 0.65 },
-  { cx: -1, cy: 2.5, rx: 41, ry: 10, stroke: "#47c0fd", strokeWidth: 2.5, fill: "none", strokeOpacity: 0.55 },
+  { cx: 0, cy: 2.5, rx: 37, ry: 7, stroke: "#61bdef", strokeWidth: 2, fill: "none", strokeOpacity: 0.65 },
+  { cx: 0, cy: 2.5, rx: 44, ry: 11, stroke: "#61bdef", strokeWidth: 2.5, fill: "none", strokeOpacity: 0.35 },
 ];
 
 function ringDash(rx: number) {
   return `${(rx / 30) * 80} 200`;
 }
 
-const RING_ROTATION = -30;
-
-export function BluePlanet() {
+export function BluePlanet({ planetSize = 25 }: { planetSize?: number }) {
   return (
-    <svg width="220" height="220" viewBox="-35 -35 70 70" overflow="visible">
+    <svg width="220" height="220" viewBox="-50 -50 100 100" overflow="visible">
       <defs>
-        <radialGradient id="bg" cx="35%" cy="28%" r="62%">
+        <radialGradient id="planet" cx="35%" cy="28%" r="62%">
           <stop offset="0%" stopColor="#a0e4ff"/>
           <stop offset="52%" stopColor="#1868d8"/>
           <stop offset="100%" stopColor="#061e60"/>
         </radialGradient>
 
-        <linearGradient
-          id="ringFade"
-          gradientUnits="userSpaceOnUse"
-          x1="-35"
-          y1="0"
-          x2="35"
-          y2="0"
-        >
+        <linearGradient id="ringFade" gradientUnits="userSpaceOnUse" x1="-50" y1="0" x2="50" y2="0">
           <stop offset="0%" stopColor="black" stopOpacity="0"/>
           <stop offset="20%" stopColor="white" stopOpacity="1"/>
           <stop offset="80%" stopColor="white" stopOpacity="1"/>
@@ -40,34 +32,36 @@ export function BluePlanet() {
         </mask>
       </defs>
 
-      {/* back rings */}
-      <g transform={`rotate(${RING_ROTATION})`} >
-        {RINGS.map((r, i) => (
-          <ellipse
-            {...r}
-            key={`back-${i}`}
-            fill="none"
-            strokeOpacity={r.strokeOpacity * 0.5}
-          />
-        ))}
-      </g>
+      <RotatingRingGroup duration={140}>
+        <g>
+          {RINGS.map((r, i) => (
+            <ellipse
+              key={`back-${i}`}
+              {...r}
+              strokeOpacity={r.strokeOpacity * 0.45}
+            />
+          ))}
+        </g>
+      </RotatingRingGroup>
 
-      {/* planet */}
-      <circle cx="0" cy="0" r="19" fill="url(#bg)"/>
+      <RotatingViaSunGroup>
+        <circle cx="0" cy="0" r={planetSize} fill="url(#planet)"/>
+      </RotatingViaSunGroup>
 
-      {/* front ring */}
-      <g transform={`rotate(${RING_ROTATION})`}>
-        {RINGS.map((r, i) => (
-          <ellipse
-            {...r}
-            key={`front-${i}`}
-            fill="none"
-            mask="url(#ringFadeMask)"
-            strokeDasharray={ringDash(r.rx)}
-            strokeDashoffset={20}
-          />
-        ))}
-      </g>
+      <RotatingRingGroup duration={140}>
+        <g>
+          {RINGS.map((r, i) => (
+            <ellipse
+              key={`front-${i}`}
+              {...r}
+              fill="none"
+              mask="url(#ringFadeMask)"
+              strokeDasharray={ringDash(r.rx)}
+              strokeDashoffset={20}
+            />
+          ))}
+        </g>
+      </RotatingRingGroup>
     </svg>
   );
 }
