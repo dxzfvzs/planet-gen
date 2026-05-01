@@ -2,6 +2,7 @@ import { Moon } from "./Moon.tsx";
 import { Jiggle, RotateToFollowSun } from "./Rotation.tsx";
 import type { Ring } from "./ring.ts";
 import { generateSmudges } from "./smudge.ts";
+import { Backlight } from "./Backlight.tsx";
 
 const RINGS: Ring[] = [
   { cx: 0, cy: 2.5, rx: 50, ry: 7, stroke: "#e8b9f8", strokeWidth: 1, fill: "none", strokeOpacity: 0.65 },
@@ -43,6 +44,7 @@ export function PurplePlanet({ planetSize = 30 }: { planetSize?: number }) {
       </defs>
 
       <RotateToFollowSun>
+        <Backlight planetSize={planetSize} key={"purple"}/>
         <circle cx="0" cy="0" r={planetSize} fill="url(#purplePlanetBase)"/>
       </RotateToFollowSun>
 

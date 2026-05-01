@@ -1,6 +1,7 @@
 import type { Ring } from "./ring.ts";
 import { Jiggle, RotateToFollowSun } from "./Rotation.tsx";
 import { generateSmudges } from "./smudge.ts";
+import { Backlight } from "./Backlight.tsx";
 
 const RINGS: Ring[] = [
   { cx: 0, cy: 2.5, rx: 37, ry: 4, stroke: "#b38006", strokeWidth: 1, fill: "none", strokeOpacity: 0.85 },
@@ -23,7 +24,7 @@ export function YellowPlanet({ planetSize = 25 }: { planetSize?: number }) {
     baseColor: "#e0c200",
     count: 5,
   });
-  
+
   return (
     <svg width="220" height="220" viewBox="-50 -50 100 100" overflow="visible">
       <defs>
@@ -44,6 +45,7 @@ export function YellowPlanet({ planetSize = 25 }: { planetSize?: number }) {
       </defs>
 
       <RotateToFollowSun>
+        <Backlight planetSize={planetSize} key={"yellow"}/>
         <circle cx="0" cy="0" r={planetSize} fill="url(#yellowPlanetBase)"/>
       </RotateToFollowSun>
 

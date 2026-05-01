@@ -2,6 +2,7 @@ import type { Ring } from "./ring.ts";
 import { Jiggle, RotateToFollowSun, RotatingGroup } from "./Rotation.tsx";
 import { Moon } from "./Moon.tsx";
 import { generateSmudges } from "./smudge.ts";
+import { Backlight } from "./Backlight.tsx";
 
 const RINGS: Ring[] = [];
 
@@ -28,6 +29,10 @@ export function GreenPlanet({ planetSize = 20 }: { planetSize?: number }) {
           <stop offset="100%" stopColor="#155020"/>
         </radialGradient>
 
+        <filter id="atmosphereGlow" x="-200%" y="-200%" width="400%" height="400%">
+          <feGaussianBlur stdDeviation="0.1" />
+        </filter>
+
         <clipPath id="greenPlanetClip">
           <circle cx="0" cy="0" r={planetSize}/>
         </clipPath>
@@ -39,6 +44,7 @@ export function GreenPlanet({ planetSize = 20 }: { planetSize?: number }) {
       </defs>
 
       <RotateToFollowSun>
+        <Backlight planetSize={planetSize} key={"green"}/>
         <circle cx="0" cy="0" r={planetSize} fill="url(#greenPlanetBase)"/>
       </RotateToFollowSun>
 
