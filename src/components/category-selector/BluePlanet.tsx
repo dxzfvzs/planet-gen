@@ -1,5 +1,5 @@
 import type { Ring } from "./ring.ts";
-import { RotatingViaSunGroup, RotatingRingGroup } from "./Rotation.tsx";
+import { RotatingRingGroup } from "./Rotation.tsx";
 
 const RINGS: Ring[] = [
   { cx: 0, cy: 2.5, rx: 37, ry: 7, stroke: "#61bdef", strokeWidth: 2, fill: "none", strokeOpacity: 0.65 },
@@ -44,9 +44,7 @@ export function BluePlanet({ planetSize = 25 }: { planetSize?: number }) {
         </g>
       </RotatingRingGroup>
 
-      <RotatingViaSunGroup>
-        <circle cx="0" cy="0" r={planetSize} fill="url(#planet)"/>
-      </RotatingViaSunGroup>
+      <circle cx="0" cy="0" r={planetSize} fill="url(#planet)"/>
 
       <RotatingRingGroup duration={140}>
         <g>
