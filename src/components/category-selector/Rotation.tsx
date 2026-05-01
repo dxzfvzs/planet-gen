@@ -1,6 +1,7 @@
-export function RotatingGroup({ children, duration = 140 }: {
+export function RotatingGroup({ children, duration = 140, invertRotation = false }: {
   children: React.ReactNode;
   duration?: number;
+  invertRotation?: boolean;
 }) {
   return (
     <g>
@@ -8,7 +9,7 @@ export function RotatingGroup({ children, duration = 140 }: {
         attributeName="transform"
         type="rotate"
         from="0 0 0"
-        to="360 0 0"
+        to={`${invertRotation ? "-360" : "360"} 0 0`}
         dur={`${duration}s`}
         repeatCount="indefinite"
       />

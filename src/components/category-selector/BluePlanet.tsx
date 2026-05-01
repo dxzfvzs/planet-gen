@@ -1,14 +1,10 @@
 import type { Ring } from "./ring.ts";
-import { RotateToFollowSun, RotatingGroup } from "./Rotation.tsx";
+import { Jiggle, RotateToFollowSun, RotatingGroup } from "./Rotation.tsx";
 
 const RINGS: Ring[] = [
-  { cx: 0, cy: 2.5, rx: 37, ry: 7, stroke: "#61bdef", strokeWidth: 1, fill: "none", strokeOpacity: 0.65 },
-  { cx: 0, cy: 2.5, rx: 44, ry: 11, stroke: "#61bdef", strokeWidth: 2.5, fill: "none", strokeOpacity: 0.35 },
+  { cx: 0, cy: 2.5, rx: 37, ry: 7, stroke: "#61bdef", strokeWidth: 1, fill: "none", strokeOpacity: 0.85 },
+  { cx: 0, cy: 2.5, rx: 44, ry: 11, stroke: "#61bdef", strokeWidth: 2.5, fill: "none", strokeOpacity: 0.25 },
 ];
-
-function ringDash(rx: number) {
-  return `${(rx / 30) * 80} 200`;
-}
 
 export function BluePlanet({ planetSize = 25 }: { planetSize?: number }) {
   return (
@@ -20,47 +16,52 @@ export function BluePlanet({ planetSize = 25 }: { planetSize?: number }) {
           <stop offset="100%" stopColor="#061e60"/>
         </radialGradient>
 
-        <linearGradient id="ringFade" gradientUnits="userSpaceOnUse" x1="-50" y1="0" x2="50" y2="0">
-          <stop offset="0%" stopColor="black" stopOpacity="0"/>
-          <stop offset="20%" stopColor="white" stopOpacity="1"/>
-          <stop offset="80%" stopColor="white" stopOpacity="1"/>
-          <stop offset="100%" stopColor="black" stopOpacity="0"/>
-        </linearGradient>
+        <clipPath id="bluePlanetClip">
+          <circle cx="0" cy="0" r={planetSize}/>
+        </clipPath>
 
-        <mask id="ringFadeMask">
-          <rect x="-100" y="-100" width="200" height="200" fill="url(#ringFade)"/>
+        <mask id="bluePlanetOcclusionMask">
+          <rect x="-200" y="-200" width="400" height="400" fill="white"/>
+          <circle cx="0" cy="0" r={planetSize} fill="url(#planetOcclusionMaskShade)"/>
         </mask>
       </defs>
-
-      <RotatingGroup duration={140}>
-        <g>
-          {RINGS.map((r, i) => (
-            <ellipse
-              key={`back-${i}`}
-              {...r}
-              strokeOpacity={r.strokeOpacity * 0.45}
-            />
-          ))}
-        </g>
-      </RotatingGroup>
 
       <RotateToFollowSun>
         <circle cx="0" cy="0" r={planetSize} fill="url(#bluePlanetBase)"/>
       </RotateToFollowSun>
 
-      <RotatingGroup duration={140}>
-        <g>
-          {RINGS.map((r, i) => (
-            <ellipse
-              key={`front-${i}`}
-              {...r}
-              fill="none"
-              mask="url(#ringFadeMask)"
-              strokeDasharray={ringDash(r.rx)}
-              strokeDashoffset={20}
-            />
-          ))}
-        </g>
+      <RotatingGroup duration={87} invertRotation>
+
+        <Jiggle duration={20} angle={1}>
+          <g clipPath="url(#bluePlanetClip)" filter="url(#bandBlur)">
+            <ellipse cx="0" cy="8" rx="50" ry="5" fill="#4a1288" opacity="0.38"/>
+            <ellipse cx="0" cy="14" rx="50" ry="3.5" fill="#7030c0" opacity="0.22"/>
+            <ellipse cx="0" cy="-6" rx="50" ry="4" fill="#3a0e6a" opacity="0.30"/>
+            <ellipse cx="0" cy="-14" rx="50" ry="3" fill="#6025a8" opacity="0.20"/>
+            <ellipse cx="0" cy="22" rx="50" ry="3" fill="#2e0860" opacity="0.28"/>
+            <ellipse cx="0" cy="-22" rx="50" ry="2.5" fill="#7838c0" opacity="0.18"/>
+            <ellipse cx="-12" cy="6" rx="8" ry="4" fill="#9955e8" opacity="0.20" transform="rotate(12)"/>
+            <ellipse cx="16" cy="-8" rx="6" ry="3" fill="#3a1280" opacity="0.22" transform="rotate(-8)"/>
+            <ellipse cx="8" cy="18" rx="5" ry="2.5" fill="#8833cc" opacity="0.18" transform="rotate(5)"/>
+            <ellipse cx="-20" cy="-10" rx="7" ry="3" fill="#5522a0" opacity="0.20" transform="rotate(20)"/>
+            <ellipse cx="0" cy="-36" rx="18" ry="9" fill="#9966dd" opacity="0.20"/>
+            <ellipse cx="0" cy="36" rx="16" ry="8" fill="#5511a8" opacity="0.18"/>
+          </g>
+        </Jiggle>
+
+        <Jiggle duration={20} angle={2}>
+          <g clipPath="url(#bluePlanetClip)" filter="url(#softBlur)" opacity="0.55">
+            <ellipse cx="2" cy="-4" rx="22" ry="2.2" fill="#d8b0ff" opacity="0.35" transform="rotate(-5)"/>
+            <ellipse cx="-4" cy="10" rx="18" ry="1.8" fill="#cc99ff" opacity="0.30" transform="rotate(7)"/>
+            <ellipse cx="8" cy="-18" rx="14" ry="1.5" fill="#e0c0ff" opacity="0.28" transform="rotate(3)"/>
+            <ellipse cx="-6" cy="24" rx="12" ry="1.5" fill="#c8a0f8" opacity="0.25" transform="rotate(-3)"/>
+            <ellipse cx="14" cy="4" rx="10" ry="1.2" fill="#f0d8ff" opacity="0.22" transform="rotate(14)"/>
+          </g>
+        </Jiggle>
+
+        {RINGS.map((r, i) => (
+          <ellipse key={`${i}`}{...r} fill="none" mask="url(#bluePlanetOcclusionMask)"/>
+        ))}
       </RotatingGroup>
     </svg>
   );
