@@ -26,9 +26,9 @@ export function SpaceCategorySelector({ value, onChange }: {
 
   return (
     <div className="relative w-full h-40">
-      <DashedLineConnector/>
 
-      <div className="absolute inset-0 flex items-center justify-around px-3">
+      <div className="absolute inset-0 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 items-center justify-items-center px-3">
+        <DashedLineConnector/>
         {keys.map((key) => {
           const Planet = planetComponents[key];
           const isActive = value === key;
@@ -42,24 +42,22 @@ export function SpaceCategorySelector({ value, onChange }: {
               onMouseLeave={() => setHovered(null)}
               className="flex flex-col items-center gap-2.5 bg-transparent border-0 cursor-pointer p-0"
             >
-              <div
-                className="transition-transform duration-300"
-                style={{
-                  transform: isActive
-                    ? "scale(1.3) translateY(-7px)"
-                    : isHovered
-                      ? "scale(1.15) translateY(-5px)"
-                      : "scale(1)",
-                }}
-              >
+              <div className={clsx(
+                "transition-transform duration-300",
+                isActive && "scale-[1.3] -translate-y-[7px]",
+                !isActive && isHovered && "scale-[1.15] -translate-y-[5px]",
+                !isActive && !isHovered && "scale-100"
+              )}>
                 <Planet/>
               </div>
+
               <div className={clsx(
                 "text-[11px] text-center max-w-[80px] leading-tight transition-colors duration-200",
                 isActive || isHovered ? "text-white" : "text-white/55"
               )}>
                 {categoryMap[key]}
               </div>
+
             </button>
           );
         })}
