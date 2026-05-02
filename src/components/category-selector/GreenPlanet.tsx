@@ -11,13 +11,15 @@ export function GreenPlanet({ planetSize = 20 }: { planetSize?: number }) {
   const smudgesBand = generateSmudges({
     seedStr: "greenBand",
     planetSize,
-    baseColor: "#125109",
+    baseColor: "#4c9816",
+    count: 18,
   });
 
   const smudgesSoft = generateSmudges({
     seedStr: "greenSoft",
     planetSize,
-    baseColor: "#25aa12",
+    baseColor: "#6fc630",
+    count: 2,
   });
 
   return (
@@ -25,7 +27,7 @@ export function GreenPlanet({ planetSize = 20 }: { planetSize?: number }) {
       <defs>
         <radialGradient id="greenPlanetBase" cx="35%" cy="28%" r="62%">
           <stop offset="0%" stopColor="#b0f070"/>
-          <stop offset="55%" stopColor="#2a9e35"/>
+          <stop offset="55%" stopColor="#6fc630"/>
           <stop offset="100%" stopColor="#155020"/>
         </radialGradient>
 

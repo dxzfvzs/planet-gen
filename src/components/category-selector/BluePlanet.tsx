@@ -11,25 +11,26 @@ const RINGS: Ring[] = [
 export function BluePlanet({ planetSize = 25 }: { planetSize?: number }) {
 
   const smudgesBand = generateSmudges({
-    seedStr: "blueBand",
+    seedStr: "blueBand-d",
     planetSize,
-    baseColor: "#095fd8",
-    count: 35,
+    baseColor: "#003b88",
+    count: 12,
   });
 
   const smudgesSoft = generateSmudges({
     seedStr: "blueSoft",
     planetSize,
-    baseColor: "#2066c3",
+    baseColor: "#69b8f6",
+    count: 4,
   });
 
   return (
     <svg width="220" height="220" viewBox="-50 -50 100 100" overflow="visible">
       <defs>
         <radialGradient id="bluePlanetBase" cx="35%" cy="28%" r="62%">
-          <stop offset="0%" stopColor="#a0e4ff"/>
-          <stop offset="52%" stopColor="#1868d8"/>
-          <stop offset="100%" stopColor="#061e60"/>
+          <stop offset="0%" stopColor="#5abcec"/>
+          <stop offset="52%" stopColor="#3297c6"/>
+          <stop offset="100%" stopColor="#003b88"/>
         </radialGradient>
 
         <clipPath id="bluePlanetClip">

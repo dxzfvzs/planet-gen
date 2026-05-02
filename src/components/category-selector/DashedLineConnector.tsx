@@ -35,7 +35,7 @@ function splinePath() {
 
 export function DashedLineConnector() {
   return (
-    <svg className="absolute inset-y-8 w-full h-full" viewBox="0 0 1000 160" preserveAspectRatio="none">
+    <svg className="absolute inset-y-12 w-full h-40" viewBox="0 0 1000 160" preserveAspectRatio="none">
       <path
         d={splinePath()}
         stroke="rgba(255,255,255,0.2)"

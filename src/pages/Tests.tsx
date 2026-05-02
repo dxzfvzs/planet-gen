@@ -45,7 +45,7 @@ export default function Tests() {
   }, [selectedCategory]);
 
   return (
-    <div className="mt-40">
+    <>
       {!activeTest && (
         <>
           {/* CATEGORY SELECTOR */}
@@ -57,29 +57,29 @@ export default function Tests() {
             }}
           />
 
-          {/* TEST LIST */}
-          <div className="space-y-6 mt-20">
-            <h1 className="text-xl font-bold">Cvičení</h1>
+          {/*/!* TEST LIST *!/*/}
+          {/*<div className="space-y-6 mt-20">*/}
+          {/*  <h1 className="text-xl font-bold">Cvičení</h1>*/}
 
-            {visibleCategories.map(category => (
-              <div key={category.category + category.meta} className="flex flex-col gap-2">
-                <div className="font-bold">
-                  {categoryMap[category.category] + " po " + category.meta.toUpperCase()}
-                </div>
+          {/*  {visibleCategories.map(category => (*/}
+          {/*    <div key={category.category + category.meta} className="flex flex-col gap-2">*/}
+          {/*      <div className="font-bold">*/}
+          {/*        {categoryMap[category.category] + " po " + category.meta.toUpperCase()}*/}
+          {/*      </div>*/}
 
-                {category.tests.map(test => (
-                  <button
-                    key={test.id}
-                    onClick={() => setActiveTestId(test.id)}
-                    className="p-4 rounded-xl bg-surface hover:bg-surface/80 transition w-full text-left"
-                  >
-                    <div className="font-semibold">{test.title}</div>
-                    <div className="text-sm opacity-70">{test.meta}</div>
-                  </button>
-                ))}
-              </div>
-            ))}
-          </div>
+          {/*      {category.tests.map(test => (*/}
+          {/*        <button*/}
+          {/*          key={test.id}*/}
+          {/*          onClick={() => setActiveTestId(test.id)}*/}
+          {/*          className="p-4 rounded-xl bg-surface hover:bg-surface/80 transition w-full text-left"*/}
+          {/*        >*/}
+          {/*          <div className="font-semibold">{test.title}</div>*/}
+          {/*          <div className="text-sm opacity-70">{test.meta}</div>*/}
+          {/*        </button>*/}
+          {/*      ))}*/}
+          {/*    </div>*/}
+          {/*  ))}*/}
+          {/*</div>*/}
         </>
       )}
 
@@ -89,6 +89,6 @@ export default function Tests() {
           onExit={() => setActiveTestId(null)}
         />
       )}
-    </div>
+    </>
   );
 }
