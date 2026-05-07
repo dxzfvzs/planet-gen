@@ -39,19 +39,22 @@ export function SpaceCategorySelector({ value, onChange }: {
             >
               <div
                 className={clsx(
-                  "flex flex-col items-center gap-3 px-4 py-8 rounded-2xl",
+                  "group flex flex-col items-center gap-3 px-4 py-8 rounded-2xl",
                   "text-white font-bold",
                   "transition-all duration-300",
-                  "hover:scale-105 hover:-rotate-1",
                   "shadow-lg",
+                  "w-[16em] h-[21.5em] box-border",
                   "bg-[image:var(--grad-tertiary)]",
-                )}
+                  "z-10",
+                  isActive && "scale-110",
+                  !isActive && "hover:scale-105 hover:-rotate-1",
+                  )}
               >
                 <div
                   className={clsx(
                     "transition-transform duration-300",
-                    isActive ? "scale-[1.3] -translate-y-[7px]" : "-translate-y-[5px]",
-                    !isActive && "hover:scale-[1.15]"
+                    isActive && "scale-[1.15]",
+                    !isActive && "group-hover:scale-110 group-hover:-rotate-1",
                   )}
                 >
                   <Planet/>
@@ -59,8 +62,10 @@ export function SpaceCategorySelector({ value, onChange }: {
 
                 <div
                   className={clsx(
-                    "text-[15px] text-center max-w-[180px] leading-tight transition-colors",
-                    isActive ? "text-white" : "text-white/40"
+                    "text-[16px] text-center max-w-[180px] leading-tight transition-colors",
+                    isActive
+                      ? "text-lg tracking-wide drop-shadow-sm"
+                      : "text-white/75"
                   )}
                 >
                   {categoryMap[key]}
