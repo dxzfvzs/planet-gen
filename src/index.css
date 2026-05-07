@@ -35,11 +35,7 @@ main {
   flex: 1;
   width: 80%;
   margin: 3em auto;
-}
-
-/* misc */
-.rounded {
-  border-radius: 6px;
+  min-height: 100%;
 }
 
 a {
