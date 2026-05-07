@@ -37,22 +37,16 @@ export function SpaceCategorySelector({ value, onChange }: {
               onClick={() => onChange(key)}
               className="flex flex-col items-center gap-3 bg-transparent border-0 p-0 cursor-pointer"
             >
-              {/* CARD FIELD (transparent space bubble) */}
               <div
                 className={clsx(
-                  "flex flex-col items-center gap-3 px-4 py-6 rounded-2xl",
+                  "flex flex-col items-center gap-3 px-4 py-8 rounded-2xl",
+                  "text-white font-bold",
                   "transition-all duration-300",
-
-                  // NO background at all
-                  "bg-transparent",
-
-                  // hover = slight presence
-
-                  isActive &&
-                  "border-white/[0.08] shadow-[0_0_70px_rgba(120,180,255,0.25)] backdrop-blur-[2px]"
+                  "hover:scale-105 hover:-rotate-1",
+                  "shadow-lg",
+                  "bg-[image:var(--grad-tertiary)]",
                 )}
               >
-
                 <div
                   className={clsx(
                     "transition-transform duration-300",
@@ -63,7 +57,6 @@ export function SpaceCategorySelector({ value, onChange }: {
                   <Planet/>
                 </div>
 
-                {/* Label */}
                 <div
                   className={clsx(
                     "text-[15px] text-center max-w-[180px] leading-tight transition-colors",
