@@ -1,5 +1,5 @@
 import { RotateToFollowSun } from "./Rotation.tsx";
-import { generateSmudges } from "./smudge.ts";
+import { generateSmudges } from "./smudge-helper.ts";
 
 type MoonProps = {
   orbitRx: number
@@ -34,11 +34,7 @@ export function Moon(
   const orbitId = `orbit-${id}-${baseId}`
   const d = `M 0 0 m ${-orbitRx + orbitOffsetX} ${orbitOffsetY} a ${orbitRx} ${orbitRy} ${orbitTilt} 1 1 ${orbitRx * 2} 0 a ${orbitRx} ${orbitRy} ${orbitTilt} 1 1 ${-orbitRx * 2} 0`
 
-  const smudgesBand = generateSmudges({
-    seedStr: "orbitId",
-    planetSize: radius,
-    baseColor: color ?? "#202020",
-  });
+  const smudgesBand = generateSmudges(orbitId, radius, color ?? "#202020");
 
   return (
     <g>

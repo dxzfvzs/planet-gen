@@ -1,4 +1,4 @@
-export function GlobalSvgDefs() {
+export function GlobalSvgPlanetDefs() {
   return (
     <svg width="0" height="0" style={{ position: "absolute" }}>
       <defs>

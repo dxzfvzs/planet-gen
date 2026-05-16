@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { type LucideIcon } from "lucide-react";
 import clsx from "clsx";
 
-type Variant = "lesson" | "exercise" | "review";
+type Variant = "primary" | "secondary" | "tertiary";
 
 interface MenuCardProps {
   label: string;
@@ -12,13 +12,13 @@ interface MenuCardProps {
 }
 
 const variants = {
-  lesson: {
+  primary: {
     bg: "bg-[image:var(--grad-primary)]",
   },
-  exercise: {
+  secondary: {
     bg: "bg-[image:var(--grad-secondary)]",
   },
-  review: {
+  tertiary: {
     bg: "bg-[image:var(--grad-tertiary)]",
   },
 };

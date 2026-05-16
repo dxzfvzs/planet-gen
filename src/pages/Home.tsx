@@ -5,13 +5,13 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center m-auto">
       <h1 className="text-4xl font-extrabold text-white mb-10 text-center mt-[5%]">
-        Co to dneska bude?
+        What do you want to do?
       </h1>
 
       <div className="flex gap-6 flex-wrap justify-center">
-        <MenuCard icon={Book} label="Lekce" link="/lessons" variant="lesson"/>
-        <MenuCard icon={PenTool} label="Cvičení" link="/test" variant="exercise"/>
-        <MenuCard icon={Notebook} label="Opakování" link="/cards" variant="review"/>
+        <MenuCard icon={Book} label="Random" link="/random" variant="primary"/>
+        <MenuCard icon={PenTool} label="Create" link="/create" variant="secondary"/>
+        <MenuCard icon={Notebook} label="Browse" link="/browse" variant="tertiary"/>
       </div>
     </div>
   );
