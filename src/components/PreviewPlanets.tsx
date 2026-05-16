@@ -1,4 +1,4 @@
-import { Planet } from "./Planet/Planet.tsx";
+import { Planet } from "./planet/Planet.tsx";
 
 export function PurplePlanet({ planetSize = 30 }: { planetSize?: number }) {
   return (
