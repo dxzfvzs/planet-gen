@@ -1,0 +1,213 @@
+import { useMemo, useState } from "react";
+import { Planet } from "../planet/Planet.tsx";
+import { type MoonConfig, type RingConfig, type TabId, TABS } from "./types.ts";
+import { BAND_SEED, DEFAULT_MOONS, DEFAULT_RINGS, PRESETS, SOFT_BAND_SEED } from "./presets.ts";
+import { SliderRow } from "./ui-collection.tsx";
+import { PaletteTab } from "./tabs/PaletteTab.tsx";
+import { SurfaceTab } from "./tabs/SurfaceTab.tsx";
+import { RingsTab } from "./tabs/RingsTab.tsx";
+import { MoonsTab } from "./tabs/MoonsTab.tsx";
+import { AnimationTab } from "./tabs/AnimationTab.tsx";
+
+export default function PlanetBuilder() {
+  const [tab, setTab] = useState<TabId>("palette");
+  const [planetSize, setPlanetSize] = useState(28);
+
+  // — palette —
+  const [customMode, setCustomMode] = useState(false);
+  const [paletteKey, setPaletteKey] = useState("nebula");
+  const [highlight, setHighlight] = useState(PRESETS[paletteKey].colors[0]);
+  const [mid, setMid] = useState(PRESETS[paletteKey].colors[1]);
+  const [shadow, setShadow] = useState(PRESETS[paletteKey].colors[2]);
+
+  // — surface —
+  const [bandSeed, setBandSeed] = useState(BAND_SEED);
+  const [softSeed, setSoftSeed] = useState(SOFT_BAND_SEED);
+  const [bandAngle, setBandAngle] = useState(5);
+  const [softAngle, setSoftAngle] = useState(15);
+  const [bandCount, setBandCount] = useState(12);
+  const [softCount, setSoftCount] = useState(4);
+  const [softOpacity, setSoftOpacity] = useState(55);
+
+  // — rings & moons (final arrays only) —
+  const [rings, setRings] = useState<RingConfig[]>(DEFAULT_RINGS);
+  const [moons, setMoons] = useState<MoonConfig[]>(DEFAULT_MOONS);
+
+  // — animation —
+  const [animMode, setAnimMode] = useState<"jiggle" | "rotate">("jiggle");
+  const [jiggleOuter, setJiggleOuter] = useState(25);
+  const [jiggleAngle, setJiggleAngle] = useState(15);
+  const [rotateDuration, setRotateDuration] = useState(40);
+  const [invertRotation, setInvertRotation] = useState(false);
+
+  // — derived —
+  const colors = useMemo<[string, string, string]>(
+    () => (customMode ? [highlight, mid, shadow] : PRESETS[paletteKey].colors),
+    [customMode, paletteKey, highlight, mid, shadow],
+  );
+
+  const gradient = useMemo(
+    () => [
+      { offset: "0%", stopColor: colors[0] },
+      { offset: "52%", stopColor: colors[1] },
+      { offset: "100%", stopColor: colors[2] },
+    ],
+    [colors],
+  );
+
+  const planetRings = useMemo(
+    () => rings.map((r) => ({
+      cx: 0,
+      cy: 2.5,
+      rx: r.rx,
+      ry: r.ry,
+      fill: "none",
+      stroke: r.stroke,
+      strokeWidth: r.strokeWidth,
+      strokeOpacity: r.strokeOpacity
+    })),
+    [rings],
+  );
+
+  const planetMoons = useMemo(
+    () => moons.map((m) => ({
+      id: m.uid,
+      orbitRx: m.orbitRx,
+      orbitRy: m.orbitRy,
+      orbitTilt: m.orbitTilt,
+      radius: m.radius,
+      duration: `${m.durationS}s`,
+      begin: m.begin,
+      baseId: "moonBase",
+      color: m.color
+    })),
+    [moons],
+  );
+
+  const animation = useMemo(() => {
+    if (animMode === "rotate") return {
+      type: "rotate" as const,
+      duration: rotateDuration,
+      invertRotation,
+      bandAngle,
+      softAngle
+    };
+    return {
+      type: "jiggle" as const,
+      outerDuration: jiggleOuter,
+      outerAngle: jiggleAngle,
+      bandDuration: 20,
+      bandAngle,
+      softDuration: 20,
+      softAngle
+    };
+  }, [animMode, rotateDuration, invertRotation, bandAngle, softAngle, jiggleOuter, jiggleAngle]);
+
+  const planetKey = `${bandSeed}-${softSeed}-${paletteKey}-${customMode ? `${highlight}${mid}${shadow}` : ""}`;
+
+  // — palette handlers —
+  function applyPreset(key: string) {
+    setPaletteKey(key);
+    setCustomMode(false);
+    const p = PRESETS[key].colors;
+    setHighlight(p[0]);
+    setMid(p[1]);
+    setShadow(p[2]);
+  }
+
+  function handleCustomColor(setter: (v: string) => void) {
+    return (v: string) => {
+      setter(v);
+      setCustomMode(true);
+    };
+  }
+
+  return (
+    <div className="flex w-full gap-4 px-4 pb-6">
+      {/* left: planet preview */}
+      <div className="flex flex-col gap-4">
+        <div
+          className="flex aspect-square items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-10 backdrop-blur-xl">
+          <Planet
+            key={planetKey}
+            id={`forge-${planetKey}`}
+            planetSize={planetSize}
+            canvasSize={200}
+            gradient={gradient}
+            band={{ seedStr: bandSeed, baseColor: colors[2], count: bandCount }}
+            soft={{ seedStr: softSeed, baseColor: colors[0], count: softCount, opacity: softOpacity / 100 }}
+            rings={planetRings}
+            moons={planetMoons}
+            animation={animation}
+          />
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
+          <SliderRow label="Planet size" value={planetSize} min={10} max={42} onChange={setPlanetSize}/>
+        </div>
+      </div>
+
+      {/* right: tab panel */}
+      <div className="flex-1 overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
+        <div className="flex border-b border-white/10">
+          {TABS.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              className={[
+                "flex-1 py-2 text-[12px] font-mono uppercase tracking-widest transition",
+                tab === t.id ? "bg-white/5 text-violet-100" : "text-white/50 hover:bg-white/5 hover:text-white",
+              ].join(" ")}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="space-y-5 overflow-y-auto p-4">
+          {tab === "palette" && (
+            <PaletteTab
+              highlight={highlight} mid={mid} shadow={shadow}
+              onApplyPreset={applyPreset}
+              onHighlightChange={handleCustomColor(setHighlight)}
+              onMidChange={handleCustomColor(setMid)}
+              onShadowChange={handleCustomColor(setShadow)}
+              onRandomise={(h, m, s) => {
+                setHighlight(h);
+                setMid(m);
+                setShadow(s);
+                setCustomMode(true);
+              }}
+            />
+          )}
+
+          {tab === "surface" && (
+            <SurfaceTab
+              bandSeed={bandSeed} softSeed={softSeed}
+              bandCount={bandCount} bandAngle={bandAngle}
+              softCount={softCount} softOpacity={softOpacity} softAngle={softAngle}
+              onBandSeedChange={setBandSeed} onSoftSeedChange={setSoftSeed}
+              onBandCountChange={setBandCount} onBandAngleChange={setBandAngle}
+              onSoftCountChange={setSoftCount} onSoftOpacityChange={setSoftOpacity} onSoftAngleChange={setSoftAngle}
+            />
+          )}
+
+          {tab === "rings" && <RingsTab onChange={setRings}/>}
+
+          {tab === "moons" && <MoonsTab onChange={setMoons}/>}
+
+          {tab === "animation" && (
+            <AnimationTab
+              animMode={animMode}
+              jiggleOuter={jiggleOuter} jiggleAngle={jiggleAngle}
+              rotateDuration={rotateDuration} invertRotation={invertRotation}
+              onAnimModeChange={setAnimMode}
+              onJiggleOuterChange={setJiggleOuter} onJiggleAngleChange={setJiggleAngle}
+              onRotateDurationChange={setRotateDuration} onInvertRotationChange={setInvertRotation}
+            />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
