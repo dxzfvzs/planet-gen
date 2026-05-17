@@ -1,5 +1,5 @@
 import { RotateToFollowSun } from "./Rotation.tsx";
-import { generateSmudges } from "./smudge.ts";
+import { generateSmudges } from "./smudge-helper.ts";
 
 type MoonProps = {
   orbitRx: number
@@ -13,6 +13,7 @@ type MoonProps = {
   begin?: number
   baseId: string,
   color?: string,
+  followSun?: boolean
 }
 
 const debug = false;
@@ -29,16 +30,13 @@ export function Moon(
     id,
     begin = 0,
     baseId = "moonBase",
-    color
+    color,
+    followSun = false,
   }: MoonProps) {
   const orbitId = `orbit-${id}-${baseId}`
   const d = `M 0 0 m ${-orbitRx + orbitOffsetX} ${orbitOffsetY} a ${orbitRx} ${orbitRy} ${orbitTilt} 1 1 ${orbitRx * 2} 0 a ${orbitRx} ${orbitRy} ${orbitTilt} 1 1 ${-orbitRx * 2} 0`
 
-  const smudgesBand = generateSmudges({
-    seedStr: "orbitId",
-    planetSize: radius,
-    baseColor: color ?? "#202020",
-  });
+  const smudgesBand = generateSmudges(orbitId, radius, color ?? "#202020");
 
   return (
     <g>
@@ -57,7 +55,7 @@ export function Moon(
         <mpath href={`#${orbitId}`}/>
       </animateMotion>
 
-      <RotateToFollowSun>
+      <RotateToFollowSun enabled={followSun}>
         <g>
           <circle r={radius} fill={`url(#${baseId})`}/>
 

@@ -1,5 +1,7 @@
+import type { ReactNode } from "react";
+
 export function RotatingGroup({ children, duration = 140, invertRotation = false }: {
-  children: React.ReactNode;
+  children: ReactNode;
   duration?: number;
   invertRotation?: boolean;
 }) {
@@ -18,15 +20,20 @@ export function RotatingGroup({ children, duration = 140, invertRotation = false
   );
 }
 
-export function RotateToFollowSun({ children, duration = 50 }: {
-  children: React.ReactNode;
+export function RotateToFollowSun({ children, duration = 50, enabled = false }: {
+  children: ReactNode;
   duration?: number;
+  enabled?: boolean;
 }) {
-  return <RotatingGroup duration={duration} children={children}/>;
+  return (
+    !enabled
+      ? children
+      : <RotatingGroup duration={duration} children={children}/>
+  );
 }
 
 export function Jiggle({ children, angle = 5, duration = 0.4 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   angle?: number;
   duration?: number;
 }) {
