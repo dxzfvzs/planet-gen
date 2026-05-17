@@ -175,7 +175,7 @@ export default function PlanetBuilder() {
   }
 
   return (
-    <div className="flex w-full gap-4 px-4 pb-6">
+    <div className="flex flex-col lg:flex-row w-full gap-4 px-2 sm:px-4 pb-6">
       {/* left: planet preview */}
       <div className="flex flex-col gap-4">
         <div
@@ -218,7 +218,7 @@ export default function PlanetBuilder() {
       </div>
 
       {/* right: tab panel */}
-      <div className="flex-1 overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
+      <div className="flex-1 min-w-0 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
         <div className="flex border-b border-white/10">
           {TABS.map((t) => (
             <button
