@@ -33,15 +33,15 @@ export function AnimationTab({
       {animMode === "jiggle" && (
         <>
           <SectionHead>Jiggle settings</SectionHead>
-          <SliderRow label="Outer duration" value={jiggleDuration} min={5} max={60} unit="s" onChange={onJiggleDurationChange} />
-          <SliderRow label="Jiggle angle" value={jiggleAngle} min={1} max={35} unit="°" onChange={onJiggleAngleChange} />
+          <SliderRow label="Duration" value={jiggleDuration} min={1} max={240} unit="s" onChange={onJiggleDurationChange} />
+          <SliderRow label="Angle" value={jiggleAngle} min={0} max={360} unit="°" onChange={onJiggleAngleChange} />
         </>
       )}
 
       {animMode === "rotate" && (
         <>
           <SectionHead>Rotation settings</SectionHead>
-          <SliderRow label="Spin duration" value={rotateDuration} min={5} max={240} unit="s" onChange={onRotateDurationChange} />
+          <SliderRow label="Duration" value={rotateDuration} min={1} max={240} unit="s" onChange={onRotateDurationChange} />
           <div className="mt-1 flex gap-2">
             <ToggleButton active={!invertRotation} onClick={() => onInvertRotationChange(false)}>→ Prograde</ToggleButton>
             <ToggleButton active={invertRotation} onClick={() => onInvertRotationChange(true)}>← Retrograde</ToggleButton>
