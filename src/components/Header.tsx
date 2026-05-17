@@ -26,10 +26,7 @@ export default function Header() {
   return (
     <header
       className="w-full sticky top-0 z-[1000] bg-bg-darker px-[10%] py-1.5 text-[18px] font-bold flex gap-5 items-center bg-[image:var(--grad-header)]">
-      <NavItem to="/">Home</NavItem>
-      <NavItem to="/random">Random</NavItem>
-      <NavItem to="/create">Create</NavItem>
-      <NavItem to="/browse">Browse</NavItem>
+      <NavItem to="/">Planet Forge</NavItem>
     </header>
   );
 }
