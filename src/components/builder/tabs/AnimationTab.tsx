@@ -1,4 +1,4 @@
-import { Chip, SectionHead, SliderRow } from "../ui-collection.tsx";
+import { ToggleButton, SectionHead, SliderRow } from "../ui-collection.tsx";
 
 interface AnimationTabProps {
   animMode: "jiggle" | "rotate";
@@ -26,8 +26,8 @@ export function AnimationTab({
       <SectionHead>Mode</SectionHead>
 
       <div className="flex gap-2">
-        <Chip active={animMode === "jiggle"} onClick={() => onAnimModeChange("jiggle")}>Jiggle</Chip>
-        <Chip active={animMode === "rotate"} onClick={() => onAnimModeChange("rotate")}>Rotate</Chip>
+        <ToggleButton active={animMode === "jiggle"} onClick={() => onAnimModeChange("jiggle")}>Jiggle</ToggleButton>
+        <ToggleButton active={animMode === "rotate"} onClick={() => onAnimModeChange("rotate")}>Rotate</ToggleButton>
       </div>
 
       {animMode === "jiggle" && (
@@ -43,8 +43,8 @@ export function AnimationTab({
           <SectionHead>Rotation settings</SectionHead>
           <SliderRow label="Spin duration" value={rotateDuration} min={5} max={240} unit="s" onChange={onRotateDurationChange} />
           <div className="mt-1 flex gap-2">
-            <Chip active={!invertRotation} onClick={() => onInvertRotationChange(false)}>→ Prograde</Chip>
-            <Chip active={invertRotation} onClick={() => onInvertRotationChange(true)}>← Retrograde</Chip>
+            <ToggleButton active={!invertRotation} onClick={() => onInvertRotationChange(false)}>→ Prograde</ToggleButton>
+            <ToggleButton active={invertRotation} onClick={() => onInvertRotationChange(true)}>← Retrograde</ToggleButton>
           </div>
         </>
       )}

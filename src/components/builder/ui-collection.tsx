@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { type LucideIcon, Shuffle, StepBackIcon } from "lucide-react";
+import { randHex } from "./lib.ts";
 
 export function Label({ children }: { children: ReactNode }) {
   return (
@@ -50,7 +51,7 @@ export function SliderRow({ label, value, min, max, step = 1, unit = "", onChang
   );
 }
 
-export function Chip({ active, onClick, children }: {
+export function ToggleButton({ active, onClick, children }: {
   active?: boolean;
   onClick: () => void;
   children: ReactNode
@@ -73,11 +74,10 @@ export function Chip({ active, onClick, children }: {
   );
 }
 
-export function TextInput({ value, onChange, placeholder, className = "" }: {
+export function TextInput({ value, onChange, placeholder }: {
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
-  className?: string
 }) {
   return (
     <input
@@ -89,9 +89,22 @@ export function TextInput({ value, onChange, placeholder, className = "" }: {
         text-violet-100 placeholder:text-violet-300/30
         focus:outline-none focus:border-violet-300/40
         backdrop-blur-md transition-colors
-        ${className}
       `}
     />
+  );
+}
+
+export function TextInputWithShuffle({ value, onChange, placeholder, onShuffleClick }: {
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  onShuffleClick: () => void;
+}) {
+  return (
+    <div className="my-1 flex gap-1 w-full flex-row justify-center">
+      <TextInput value={value} onChange={onChange} placeholder={placeholder}/>
+      <ClickableButton onClick={() => onShuffleClick()} label={""} icon={Shuffle}/>
+    </div>
   );
 }
 
@@ -116,7 +129,7 @@ export function ColorInput({ value, onChange, label }: {
             [&::-webkit-color-swatch-wrapper]:p-0
           "
         />
-        <TextInput value={value} onChange={onChange}/>
+        <TextInputWithShuffle value={value} onChange={onChange} onShuffleClick={() => onChange(randHex())}/>
       </div>
     </div>
   );
@@ -133,7 +146,7 @@ export function ClickableButton({ onClick, label, icon: Icon, disabled }: {
       onClick={onClick}
       disabled={disabled}
       className={`
-        mt-1 p-2 flex items-center gap-2 transition
+        p-2 flex items-center gap-2 transition
         text-[10px] font-mono uppercase tracking-widest
         rounded-xl border border-white/10 bg-white/5 hover:bg-white/10
         disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white/5

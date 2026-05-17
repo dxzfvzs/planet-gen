@@ -26,10 +26,18 @@ export const PRESETS: Record<string, PlanetPreset> = {
     label: "Silver",
     colors: ["#ecd1e9", "#8498b5", "#8a6897"],
   },
+  onyx: {
+    label: "Onyx",
+    colors: ["#7c3ddc", "#0f85a5", "#391c3a"],
+  },
+  dream: {
+    label: "Dream",
+    colors: ["#c183dc", "#154e98", "#7274ff"],
+  },
 };
 
-export const BAND_SEED = "band";
-export const SOFT_BAND_SEED = "softBand";
+export const BAND_SEED = "c183dc";
+export const SOFT_BAND_SEED = "c183dc";
 
 export const DEFAULT_RINGS = [
   { uid: uid(), rx: 50, ry: 7, stroke: "#e8b9f8", strokeWidth: 1, strokeOpacity: 0.65 },
