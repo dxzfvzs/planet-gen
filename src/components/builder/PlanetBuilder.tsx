@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Planet } from "../planet/Planet.tsx";
+import { type AnimationMode, Planet } from "../planet/Planet.tsx";
 import { type MoonConfig, type RingConfig, type TabId, TABS } from "./types.ts";
 import { BAND_SEED, DEFAULT_MOONS, DEFAULT_RINGS, PRESETS, SOFT_BAND_SEED } from "./presets.ts";
 import { SliderRow } from "./ui-collection.tsx";
@@ -36,7 +36,7 @@ export default function PlanetBuilder() {
 
   // — animation —
   const [animMode, setAnimMode] = useState<"jiggle" | "rotate">("jiggle");
-  const [jiggleOuter, setJiggleOuter] = useState(25);
+  const [jiggleDuration, setJiggleDuration] = useState(25);
   const [jiggleAngle, setJiggleAngle] = useState(15);
   const [rotateDuration, setRotateDuration] = useState(40);
   const [invertRotation, setInvertRotation] = useState(false);
@@ -85,24 +85,18 @@ export default function PlanetBuilder() {
     [moons],
   );
 
-  const animation = useMemo(() => {
+  const animation: AnimationMode = useMemo(() => {
     if (animMode === "rotate") return {
       type: "rotate" as const,
       duration: rotateDuration,
       invertRotation,
-      bandAngle,
-      softAngle
     };
     return {
       type: "jiggle" as const,
-      outerDuration: jiggleOuter,
-      outerAngle: jiggleAngle,
-      bandDuration: 20,
-      bandAngle,
-      softDuration: 20,
-      softAngle
+      duration: jiggleDuration,
+      angle: jiggleAngle,
     };
-  }, [animMode, rotateDuration, invertRotation, bandAngle, softAngle, jiggleOuter, jiggleAngle]);
+  }, [animMode, rotateDuration, invertRotation, jiggleDuration, jiggleAngle]);
 
   // — palette handlers —
   function applyPreset(key: string) {
@@ -182,10 +176,10 @@ export default function PlanetBuilder() {
 
           <div className={tab !== "surface" ? "hidden" : ""}>
             <SurfaceTab
-              bandSeed={bandSeed} softSeed={softSeed}
+              bandSeed={bandSeed} onBandSeedChange={setBandSeed}
+              softSeed={softSeed} onSoftSeedChange={setSoftSeed}
               bandCount={bandCount} bandOpacity={bandOpacity} bandAngle={bandAngle}
               softCount={softCount} softOpacity={softOpacity} softAngle={softAngle}
-              onBandSeedChange={setBandSeed} onSoftSeedChange={setSoftSeed}
               onBandCountChange={setBandCount} onBandOpacityChange={setBandOpacity} onBandAngleChange={setBandAngle}
               onSoftCountChange={setSoftCount} onSoftOpacityChange={setSoftOpacity} onSoftAngleChange={setSoftAngle}
             />
@@ -201,12 +195,11 @@ export default function PlanetBuilder() {
 
           <div className={tab !== "animation" ? "hidden" : ""}>
             <AnimationTab
-              animMode={animMode}
-              jiggleOuter={jiggleOuter} jiggleAngle={jiggleAngle}
-              rotateDuration={rotateDuration} invertRotation={invertRotation}
-              onAnimModeChange={setAnimMode}
-              onJiggleOuterChange={setJiggleOuter} onJiggleAngleChange={setJiggleAngle}
-              onRotateDurationChange={setRotateDuration} onInvertRotationChange={setInvertRotation}
+              animMode={animMode} onAnimModeChange={setAnimMode}
+              jiggleDuration={jiggleDuration} onJiggleDurationChange={setJiggleDuration}
+              jiggleAngle={jiggleAngle} onJiggleAngleChange={setJiggleAngle}
+              rotateDuration={rotateDuration} onRotateDurationChange={setRotateDuration}
+              invertRotation={invertRotation} onInvertRotationChange={setInvertRotation}
             />
           </div>
         </div>

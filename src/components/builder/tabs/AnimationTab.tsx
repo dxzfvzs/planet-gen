@@ -2,12 +2,12 @@ import { ToggleButton, SectionHead, SliderRow } from "../ui-collection.tsx";
 
 interface AnimationTabProps {
   animMode: "jiggle" | "rotate";
-  jiggleOuter: number;
+  jiggleDuration: number;
   jiggleAngle: number;
   rotateDuration: number;
   invertRotation: boolean;
   onAnimModeChange: (mode: "jiggle" | "rotate") => void;
-  onJiggleOuterChange: (v: number) => void;
+  onJiggleDurationChange: (v: number) => void;
   onJiggleAngleChange: (v: number) => void;
   onRotateDurationChange: (v: number) => void;
   onInvertRotationChange: (v: boolean) => void;
@@ -15,10 +15,10 @@ interface AnimationTabProps {
 
 export function AnimationTab({
   animMode,
-  jiggleOuter, jiggleAngle,
+  jiggleDuration, jiggleAngle,
   rotateDuration, invertRotation,
   onAnimModeChange,
-  onJiggleOuterChange, onJiggleAngleChange,
+  onJiggleDurationChange, onJiggleAngleChange,
   onRotateDurationChange, onInvertRotationChange,
 }: AnimationTabProps) {
   return (
@@ -33,7 +33,7 @@ export function AnimationTab({
       {animMode === "jiggle" && (
         <>
           <SectionHead>Jiggle settings</SectionHead>
-          <SliderRow label="Outer duration" value={jiggleOuter} min={5} max={60} unit="s" onChange={onJiggleOuterChange} />
+          <SliderRow label="Outer duration" value={jiggleDuration} min={5} max={60} unit="s" onChange={onJiggleDurationChange} />
           <SliderRow label="Jiggle angle" value={jiggleAngle} min={1} max={35} unit="°" onChange={onJiggleAngleChange} />
         </>
       )}
