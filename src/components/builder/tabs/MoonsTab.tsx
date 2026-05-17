@@ -1,7 +1,7 @@
 import { type MoonConfig } from "../types.ts";
 import { ColorInput, SliderRow } from "../ui-collection.tsx";
 import { AddCard, ConfigCard } from "../ConfigCard.tsx";
-import { uid } from "../lib.ts";
+import { randHex, uid } from "../lib.ts";
 
 interface MoonsTabProps {
   moons: MoonConfig[];
@@ -10,17 +10,25 @@ interface MoonsTabProps {
 }
 
 export function MoonsTab({ moons, onChange, minOrbit }: MoonsTabProps) {
+  function randStep(min: number, max: number, step: number = 1) {
+    const steps = Math.floor((max - min) / step);
+    return min + Math.round(Math.random() * steps) * step;
+  }
+
   function add() {
-    const radius = 3;
+    const radius = randStep(0.5, 10, 0.5);
+    const orbitRxMin = minOrbit + radius;
+    const orbitRx = randStep(orbitRxMin, 90);
+
     onChange([...moons, {
       uid: uid(),
-      orbitRx: minOrbit + radius,
-      orbitRy: 12,
-      orbitTilt: 0,
+      orbitRx,
+      orbitRy: randStep(10, 35),
+      orbitTilt: randStep(-15, 15),
       radius,
-      durationS: 8,
-      begin: -4,
-      color: "#b57aee",
+      durationS: randStep(2, 60),
+      begin: randStep(-30, 0),
+      color: randHex(),
     }]);
   }
 
@@ -40,7 +48,7 @@ export function MoonsTab({ moons, onChange, minOrbit }: MoonsTabProps) {
                      onChange={(v) => updateMoon(m.uid, "radius", v)}/>
           <SliderRow label="Orbit X" value={m.orbitRx} min={minOrbit + m.radius} max={90}
                      onChange={(v) => updateMoon(m.uid, "orbitRx", v)}/>
-          <SliderRow label="Orbit Y" value={m.orbitRy} min={4} max={35}
+          <SliderRow label="Orbit Y" value={m.orbitRy} min={4 + m.radius} max={35}
                      onChange={(v) => updateMoon(m.uid, "orbitRy", v)}/>
           <SliderRow label="Tilt" value={m.orbitTilt} min={-45} max={45} unit="°"
                      onChange={(v) => updateMoon(m.uid, "orbitTilt", v)}/>
