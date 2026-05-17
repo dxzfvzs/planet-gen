@@ -109,10 +109,10 @@ export function ColorInput({ value, onChange, label }: {
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className="
-            size-7 shrink-0 cursor-pointer overflow-hidden rounded-md
+            size-7 shrink-0 cursor-pointer overflow-hidden rounded-2xl
             border border-white/50 bg-transparent
             [&::-webkit-color-swatch]:border-0
-            [&::-webkit-color-swatch]:rounded-md
+            [&::-webkit-color-swatch]:rounded-2xl
             [&::-webkit-color-swatch-wrapper]:p-0
           "
         />
@@ -133,7 +133,7 @@ export function ClickableButton({ onClick, label, icon: Icon, disabled }: {
       onClick={onClick}
       disabled={disabled}
       className={`
-        mt-1 p-3 flex items-center gap-2 transition
+        mt-1 p-2 flex items-center gap-2 transition
         text-[10px] font-mono uppercase tracking-widest
         rounded-xl border border-white/10 bg-white/5 hover:bg-white/10
         disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white/5

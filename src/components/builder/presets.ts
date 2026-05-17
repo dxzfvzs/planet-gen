@@ -22,6 +22,10 @@ export const PRESETS: Record<string, PlanetPreset> = {
     label: "Sundew",
     colors: ["#bee9de", "#fab64e", "#cd3a02"],
   },
+  silver: {
+    label: "Silver",
+    colors: ["#ecd1e9", "#8498b5", "#8a6897"],
+  },
 };
 
 export const BAND_SEED = "band";
