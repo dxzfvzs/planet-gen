@@ -112,16 +112,28 @@ export default function PlanetBuilder() {
   function handlePlanetSizeChange(size: number) {
     const newMinOrbit = size + 4;
     setPlanetSize(size);
-    setRings(prev => prev.map(r => ({ ...r, rx: Math.max(r.rx, newMinOrbit) })));
-    setMoons(prev => prev.map(m => ({ ...m, orbitRx: Math.max(m.orbitRx, newMinOrbit + m.radius) })));
+    setRings(prev => prev.map(r => ({
+      ...r,
+      rx: Math.max(r.rx, newMinOrbit + r.strokeWidth * 2),
+    })));
+    setMoons(prev => prev.map(m => ({
+      ...m,
+      orbitRx: Math.max(m.orbitRx, newMinOrbit + m.radius),
+    })));
   }
 
   function handleRingsChange(next: RingConfig[]) {
-    setRings(next.map(r => ({ ...r, rx: Math.max(r.rx, minOrbit) })));
+    setRings(next.map(r => ({
+      ...r,
+      rx: Math.max(r.rx, minOrbit + r.strokeWidth * 2),
+    })));
   }
 
   function handleMoonsChange(next: MoonConfig[]) {
-    setMoons(next.map(m => ({ ...m, orbitRx: Math.max(m.orbitRx, minOrbit + m.radius) })));
+    setMoons(next.map(m => ({
+      ...m,
+      orbitRx: Math.max(m.orbitRx, minOrbit + m.radius),
+    })));
   }
 
   function applyPreset(key: string) {

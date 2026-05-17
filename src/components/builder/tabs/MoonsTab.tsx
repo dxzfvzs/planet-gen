@@ -11,15 +11,16 @@ interface MoonsTabProps {
 
 export function MoonsTab({ moons, onChange, minOrbit }: MoonsTabProps) {
   function add() {
+    const radius = 3;
     onChange([...moons, {
       uid: uid(),
-      orbitRx: minOrbit,
+      orbitRx: minOrbit + radius,
       orbitRy: 12,
       orbitTilt: 0,
-      radius: 3,
+      radius,
       durationS: 8,
       begin: -4,
-      color: "#b57aee"
+      color: "#b57aee",
     }]);
   }
 

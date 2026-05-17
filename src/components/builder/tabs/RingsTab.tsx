@@ -11,7 +11,15 @@ interface RingsTabProps {
 
 export function RingsTab({ rings, onChange, minOrbit }: RingsTabProps) {
   function add() {
-    onChange([...rings, { uid: uid(), rx: Math.max(45, minOrbit), ry: 6, stroke: "#b57aee", strokeWidth: 1.5, strokeOpacity: 0.5 }]);
+    const sw = 1.5;
+    onChange([...rings, {
+      uid: uid(),
+      rx: Math.max(45, minOrbit + sw / 2),
+      ry: 6,
+      stroke: "#b57aee",
+      strokeWidth: sw,
+      strokeOpacity: 0.5,
+    }]);
   }
 
   function remove(id: string) {
@@ -27,7 +35,8 @@ export function RingsTab({ rings, onChange, minOrbit }: RingsTabProps) {
       {rings.map((r, i) => (
         <ConfigCard key={r.uid} title={`Ring ${i + 1}`} onRemove={() => remove(r.uid)}>
           <SliderRow label="Orbit X" value={r.rx} min={minOrbit} max={90} onChange={(v) => updateRing(r.uid, "rx", v)}/>
-          <SliderRow label="Orbit Y" value={r.ry} min={2} max={25} onChange={(v) => updateRing(r.uid, "ry", v)}/>
+          <SliderRow label="Orbit Y" value={r.ry} min={6} max={25}
+                     onChange={(v) => updateRing(r.uid, "ry", v)}/>
           <SliderRow label="Width" value={r.strokeWidth} min={0.5} max={5} step={0.5}
                      onChange={(v) => updateRing(r.uid, "strokeWidth", v)}/>
           <SliderRow
