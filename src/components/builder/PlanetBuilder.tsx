@@ -38,7 +38,7 @@ export default function PlanetBuilder() {
     };
   }
 
-  // — rings & moons (final arrays only) —
+  // — rings & moons —
   const [rings, setRings] = useState<RingConfig[]>(DEFAULT_RINGS);
   const [moons, setMoons] = useState<MoonConfig[]>(DEFAULT_MOONS);
 
@@ -73,7 +73,7 @@ export default function PlanetBuilder() {
       fill: "none",
       stroke: r.stroke,
       strokeWidth: r.strokeWidth,
-      strokeOpacity: r.strokeOpacity
+      strokeOpacity: r.strokeOpacity,
     })),
     [rings],
   );
@@ -88,7 +88,7 @@ export default function PlanetBuilder() {
       duration: `${m.durationS}s`,
       begin: m.begin,
       baseId: "moonBase",
-      color: m.color
+      color: m.color,
     })),
     [moons],
   );
@@ -106,7 +106,24 @@ export default function PlanetBuilder() {
     };
   }, [animMode, rotateDuration, invertRotation, jiggleDuration, jiggleAngle]);
 
-  // — palette handlers —
+  // — handlers —
+  const minOrbit = planetSize + 4;
+
+  function handlePlanetSizeChange(size: number) {
+    const newMinOrbit = size + 4;
+    setPlanetSize(size);
+    setRings(prev => prev.map(r => ({ ...r, rx: Math.max(r.rx, newMinOrbit) })));
+    setMoons(prev => prev.map(m => ({ ...m, orbitRx: Math.max(m.orbitRx, newMinOrbit + m.radius) })));
+  }
+
+  function handleRingsChange(next: RingConfig[]) {
+    setRings(next.map(r => ({ ...r, rx: Math.max(r.rx, minOrbit) })));
+  }
+
+  function handleMoonsChange(next: MoonConfig[]) {
+    setMoons(next.map(m => ({ ...m, orbitRx: Math.max(m.orbitRx, minOrbit + m.radius) })));
+  }
+
   function applyPreset(key: string) {
     setPaletteKey(key);
     setCustomMode(false);
@@ -130,7 +147,7 @@ export default function PlanetBuilder() {
         <div
           className="flex aspect-square items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-10 backdrop-blur-xl">
           <Planet
-            id={`forge-planet`}
+            id="forge-planet"
             planetSize={planetSize}
             canvasSize={200}
             gradient={gradient}
@@ -139,14 +156,14 @@ export default function PlanetBuilder() {
               baseColor: colors[2],
               count: band.count,
               opacity: band.opacity / 100,
-              angle: band.angle
+              angle: band.angle,
             }}
             soft={{
               seedStr: soft.seed,
               baseColor: colors[0],
               count: soft.count,
               opacity: soft.opacity / 100,
-              angle: soft.angle
+              angle: soft.angle,
             }}
             rings={planetRings}
             moons={planetMoons}
@@ -156,7 +173,7 @@ export default function PlanetBuilder() {
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
-          <SliderRow label="Planet size" value={planetSize} min={10} max={42} onChange={setPlanetSize}/>
+          <SliderRow label="Planet size" value={planetSize} min={10} max={42} onChange={handlePlanetSizeChange}/>
           <SliderRow label="Backlight Glow" value={backlightGlow} unit="%" min={0} max={25}
                      onChange={setBacklightGlow}/>
         </div>
@@ -205,11 +222,11 @@ export default function PlanetBuilder() {
           </div>
 
           <div className={tab !== "rings" ? "hidden" : ""}>
-            <RingsTab onChange={setRings}/>
+            <RingsTab rings={rings} onChange={handleRingsChange} minOrbit={minOrbit}/>
           </div>
 
           <div className={tab !== "moons" ? "hidden" : ""}>
-            <MoonsTab onChange={setMoons}/>
+            <MoonsTab moons={moons} onChange={handleMoonsChange} minOrbit={minOrbit}/>
           </div>
 
           <div className={tab !== "animation" ? "hidden" : ""}>
