@@ -1,64 +1,61 @@
 import { Label, SectionHead, SliderRow, TextInputWithShuffle } from "../ui-collection.tsx";
 import { randSeed } from "../lib.ts";
 
-interface SurfaceTabProps {
-  bandSeed: string;
-  softSeed: string;
-  bandCount: number;
-  bandAngle: number;
-  softCount: number;
-  bandOpacity: number;
-  softOpacity: number;
-  softAngle: number;
-  onBandSeedChange: (v: string) => void;
-  onSoftSeedChange: (v: string) => void;
-  onBandCountChange: (v: number) => void;
-  onBandOpacityChange: (v: number) => void;
-  onBandAngleChange: (v: number) => void;
-  onSoftCountChange: (v: number) => void;
-  onSoftOpacityChange: (v: number) => void;
-  onSoftAngleChange: (v: number) => void;
+export interface LayerConfig {
+  seed: string;
+  count: number;
+  opacity: number;
+  angle: number;
 }
 
-export function SurfaceTab({
-  bandSeed, softSeed,
-  bandCount, bandOpacity, bandAngle,
-  softCount, softOpacity, softAngle,
-  onBandSeedChange, onSoftSeedChange,
-  onBandCountChange, onBandOpacityChange, onBandAngleChange,
-  onSoftCountChange, onSoftOpacityChange, onSoftAngleChange,
-}: SurfaceTabProps) {
+export interface LayerConfigHandlers {
+  onSeedChange: (v: string) => void;
+  onCountChange: (v: number) => void;
+  onOpacityChange: (v: number) => void;
+  onAngleChange: (v: number) => void;
+}
+
+interface SurfaceTabProps {
+  band: LayerConfig;
+  soft: LayerConfig;
+  bandHandlers: LayerConfigHandlers;
+  softHandlers: LayerConfigHandlers;
+}
+
+interface LayerSectionProps {
+  title: string;
+  countMax: number;
+  angleMax: number;
+  config: LayerConfig;
+  handlers: LayerConfigHandlers;
+}
+
+function LayerSection({ title, countMax, angleMax, config, handlers }: LayerSectionProps) {
+  return (
+    <div>
+      <SectionHead>{title}</SectionHead>
+      <div className="mb-2 flex items-center gap-2">
+        <div className="flex-1">
+          <Label>Seed</Label>
+          <TextInputWithShuffle
+            value={config.seed}
+            onChange={handlers.onSeedChange}
+            onShuffleClick={() => handlers.onSeedChange(randSeed())}
+          />
+        </div>
+      </div>
+      <SliderRow label="Density" value={config.count} min={1} max={countMax} onChange={handlers.onCountChange}/>
+      <SliderRow label="Opacity" value={config.opacity} min={0} max={100} unit="%" onChange={handlers.onOpacityChange}/>
+      <SliderRow label="Angle" value={config.angle} min={0} max={angleMax} onChange={handlers.onAngleChange}/>
+    </div>
+  );
+}
+
+export function SurfaceTab({ band, soft, bandHandlers, softHandlers }: SurfaceTabProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div>
-        <SectionHead>Band layer</SectionHead>
-        <div className="mb-2 flex items-center gap-2">
-          <div className="flex-1">
-            <Label>Seed</Label>
-            <TextInputWithShuffle value={bandSeed} onChange={onSoftSeedChange}
-                                  onShuffleClick={() => onBandSeedChange(randSeed())}/>
-          </div>
-        </div>
-
-        <SliderRow label="Band density" value={bandCount} min={2} max={30} onChange={onBandCountChange}/>
-        <SliderRow label="Band opacity" value={bandOpacity} min={0} max={100} unit="%" onChange={onBandOpacityChange}/>
-        <SliderRow label="Band jiggle" value={bandAngle} min={0} max={20} onChange={onBandAngleChange}/>
-      </div>
-
-      <div>
-        <SectionHead>Soft layer</SectionHead>
-        <div className="mb-2 flex items-center gap-2">
-          <div className="flex-1">
-            <Label>Seed</Label>
-            <TextInputWithShuffle value={softSeed} onChange={onSoftSeedChange}
-                                  onShuffleClick={() => onSoftSeedChange(randSeed())}/>
-          </div>
-        </div>
-
-        <SliderRow label="Soft count" value={softCount} min={1} max={10} onChange={onSoftCountChange}/>
-        <SliderRow label="Soft opacity" value={softOpacity} min={0} max={100} unit="%" onChange={onSoftOpacityChange}/>
-        <SliderRow label="Soft jiggle" value={softAngle} min={0} max={30} onChange={onSoftAngleChange}/>
-      </div>
+      <LayerSection title={`Primary ("Shadow") Smudge`} countMax={30} angleMax={20} config={band} handlers={bandHandlers}/>
+      <LayerSection title={`Secondary ("Highlight") Smudge`} countMax={10} angleMax={30} config={soft} handlers={softHandlers}/>
     </div>
   );
 }

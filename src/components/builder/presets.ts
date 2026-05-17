@@ -18,14 +18,6 @@ export const PRESETS: Record<string, PlanetPreset> = {
     label: "Paradise",
     colors: ["#6b01ef", "#630644", "#efd611"],
   },
-  sundew: {
-    label: "Sundew",
-    colors: ["#bee9de", "#fab64e", "#cd3a02"],
-  },
-  silver: {
-    label: "Silver",
-    colors: ["#ecd1e9", "#8498b5", "#8a6897"],
-  },
   onyx: {
     label: "Onyx",
     colors: ["#7c3ddc", "#0f85a5", "#391c3a"],
@@ -46,9 +38,13 @@ export const PRESETS: Record<string, PlanetPreset> = {
     label: "Glacio",
     colors: ["#5f59b8", "#0e89ae", "#93e6c8"],
   },
-  strawberry: {
-    label: "Strawberry",
+  munchkin: {
+    label: "Munchkin",
     colors: ["#b7f8a4", "#c50b09", "#bb99f4"],
+  },
+  berries: {
+    label: "Berries",
+    colors: ["#88380f", "#5804c1", "#a43526"],
   },
 };
 

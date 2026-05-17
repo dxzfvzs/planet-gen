@@ -1,10 +1,10 @@
-import { useMemo, useState } from "react";
+import { type Dispatch, useMemo, useState } from "react";
 import { type AnimationMode, Planet } from "../planet/Planet.tsx";
 import { type MoonConfig, type RingConfig, type TabId, TABS } from "./types.ts";
 import { BAND_SEED, DEFAULT_MOONS, DEFAULT_RINGS, PRESETS, SOFT_BAND_SEED } from "./presets.ts";
 import { SliderRow } from "./ui-collection.tsx";
 import { PaletteTab } from "./tabs/PaletteTab.tsx";
-import { SurfaceTab } from "./tabs/SurfaceTab.tsx";
+import { type LayerConfig, type LayerConfigHandlers, SurfaceTab } from "./tabs/SurfaceTab.tsx";
 import { RingsTab } from "./tabs/RingsTab.tsx";
 import { MoonsTab } from "./tabs/MoonsTab.tsx";
 import { AnimationTab } from "./tabs/AnimationTab.tsx";
@@ -21,14 +21,21 @@ export default function PlanetBuilder() {
   const [shadow, setShadow] = useState(PRESETS[paletteKey].colors[2]);
 
   // — surface —
-  const [bandSeed, setBandSeed] = useState(BAND_SEED);
-  const [softSeed, setSoftSeed] = useState(SOFT_BAND_SEED);
-  const [bandAngle, setBandAngle] = useState(5);
-  const [softAngle, setSoftAngle] = useState(15);
-  const [bandCount, setBandCount] = useState(12);
-  const [softCount, setSoftCount] = useState(4);
-  const [softOpacity, setSoftOpacity] = useState(55);
-  const [bandOpacity, setBandOpacity] = useState(100);
+  const [band, setBand] = useState<LayerConfig>({
+    seed: BAND_SEED, count: 12, opacity: 100, angle: 5,
+  });
+  const [soft, setSoft] = useState<LayerConfig>({
+    seed: SOFT_BAND_SEED, count: 4, opacity: 55, angle: 15,
+  });
+
+  function layerHandlers(setter: Dispatch<React.SetStateAction<LayerConfig>>): LayerConfigHandlers {
+    return {
+      onSeedChange: (v) => setter(p => ({ ...p, seed: v })),
+      onCountChange: (v) => setter(p => ({ ...p, count: v })),
+      onOpacityChange: (v) => setter(p => ({ ...p, opacity: v })),
+      onAngleChange: (v) => setter(p => ({ ...p, angle: v })),
+    };
+  }
 
   // — rings & moons (final arrays only) —
   const [rings, setRings] = useState<RingConfig[]>(DEFAULT_RINGS);
@@ -126,8 +133,8 @@ export default function PlanetBuilder() {
             planetSize={planetSize}
             canvasSize={200}
             gradient={gradient}
-            band={{ seedStr: bandSeed, baseColor: colors[2], count: bandCount, opacity: bandOpacity / 100 }}
-            soft={{ seedStr: softSeed, baseColor: colors[0], count: softCount, opacity: softOpacity / 100 }}
+            band={{ seedStr: band.seed, baseColor: colors[2], count: band.count, opacity: band.opacity / 100 }}
+            soft={{ seedStr: soft.seed, baseColor: colors[0], count: soft.count, opacity: soft.opacity / 100 }}
             rings={planetRings}
             moons={planetMoons}
             animation={animation}
@@ -176,12 +183,8 @@ export default function PlanetBuilder() {
 
           <div className={tab !== "surface" ? "hidden" : ""}>
             <SurfaceTab
-              bandSeed={bandSeed} onBandSeedChange={setBandSeed}
-              softSeed={softSeed} onSoftSeedChange={setSoftSeed}
-              bandCount={bandCount} bandOpacity={bandOpacity} bandAngle={bandAngle}
-              softCount={softCount} softOpacity={softOpacity} softAngle={softAngle}
-              onBandCountChange={setBandCount} onBandOpacityChange={setBandOpacity} onBandAngleChange={setBandAngle}
-              onSoftCountChange={setSoftCount} onSoftOpacityChange={setSoftOpacity} onSoftAngleChange={setSoftAngle}
+              band={band} bandHandlers={layerHandlers(setBand)}
+              soft={soft} softHandlers={layerHandlers(setSoft)}
             />
           </div>
 
