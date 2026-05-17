@@ -46,6 +46,10 @@ export const PRESETS: Record<string, PlanetPreset> = {
     label: "Berries",
     colors: ["#88380f", "#5804c1", "#a43526"],
   },
+  mars: {
+    label: "Mars",
+    colors: ["#c9cd5a", "#c04a2e", "#312624"],
+  },
 };
 
 export const BAND_SEED = "c183dc";
