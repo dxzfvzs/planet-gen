@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { type LucideIcon, Shuffle, StepBackIcon } from "lucide-react";
+import { Download, type LucideIcon, Shuffle, StepBackIcon } from "lucide-react";
 import { randHex } from "./lib.ts";
 
 export function Label({ children }: { children: ReactNode }) {
@@ -135,11 +135,12 @@ export function ColorInput({ value, onChange, label }: {
   );
 }
 
-export function ClickableButton({ onClick, label, icon: Icon, disabled }: {
+export function ClickableButton({ onClick, label, icon: Icon, disabled, className = "" }: {
   onClick: () => void;
   label: string;
   icon: LucideIcon;
   disabled?: boolean;
+  className?: string;
 }) {
   return (
     <button
@@ -150,6 +151,7 @@ export function ClickableButton({ onClick, label, icon: Icon, disabled }: {
         text-[10px] font-mono uppercase tracking-widest
         rounded-xl border border-white/10 bg-white/5 hover:bg-white/10
         disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white/5
+        ${className}
       `}
     >
       <Icon size={12}/>
@@ -164,4 +166,13 @@ export function RandomiseButton({ onClick, disabled }: { onClick: () => void, di
 
 export function StepBack({ onClick, disabled }: { onClick: () => void, disabled?: boolean }) {
   return <ClickableButton onClick={onClick} icon={StepBackIcon} label={"Undo"} disabled={disabled}/>
+}
+
+export function DownloadButton({ onClick, disabled }: { onClick: () => void, disabled?: boolean }) {
+  return (
+    <ClickableButton
+      onClick={onClick} icon={Download} label={"Download SVG"} disabled={disabled}
+      className={"w-full "}
+    />
+  );
 }

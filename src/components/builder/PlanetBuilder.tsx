@@ -2,7 +2,7 @@ import { type Dispatch, type SetStateAction, useMemo, useState } from "react";
 import { type AnimationMode, Planet } from "../planet/Planet.tsx";
 import { type MoonConfig, type RingConfig, type TabId, TABS } from "./types.ts";
 import { BAND_SEED, DEFAULT_MOONS, DEFAULT_RINGS, PRESETS, SOFT_BAND_SEED } from "./presets.ts";
-import { SliderRow } from "./ui-collection.tsx";
+import { DownloadButton, SliderRow } from "./ui-collection.tsx";
 import { PaletteTab } from "./tabs/PaletteTab.tsx";
 import { type LayerConfig, type LayerConfigHandlers, SurfaceTab } from "./tabs/SurfaceTab.tsx";
 import { RingsTab } from "./tabs/RingsTab.tsx";
@@ -152,6 +152,27 @@ export default function PlanetBuilder() {
     };
   }
 
+  function downloadPlanetSVG() {
+    const svgEl = document.querySelector<SVGSVGElement>("#forge-planet-svg");
+    if (!svgEl) return;
+
+    const clone = svgEl.cloneNode(true) as SVGSVGElement;
+    clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+
+    // Expand viewBox to capture overflow content
+    const maxRingRx = rings.length ? Math.max(...rings.map(r => r.rx + r.strokeWidth)) : 0;
+    const maxMoonRx = moons.length ? Math.max(...moons.map(m => m.orbitRx + m.radius)) : 0;
+    const extent = Math.max(planetSize, maxRingRx, maxMoonRx) + backlightGlow + 8;
+    
+    clone.setAttribute("viewBox", `${-extent} ${-extent} ${extent * 2} ${extent * 2}`);
+    clone.removeAttribute("overflow"); // no longer needed
+
+    const blob = new Blob([new XMLSerializer().serializeToString(clone)], { type: "image/svg+xml" });
+    const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: "planet.svg" });
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
   return (
     <div className="flex w-full gap-4 px-4 pb-6">
       {/* left: planet preview */}
@@ -188,6 +209,10 @@ export default function PlanetBuilder() {
           <SliderRow label="Planet size" value={planetSize} min={10} max={42} onChange={handlePlanetSizeChange}/>
           <SliderRow label="Backlight Glow" value={backlightGlow} unit="%" min={0} max={25}
                      onChange={setBacklightGlow}/>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
+          <DownloadButton onClick={downloadPlanetSVG}/>
         </div>
       </div>
 
