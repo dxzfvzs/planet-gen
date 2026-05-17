@@ -12,6 +12,7 @@ import { AnimationTab } from "./tabs/AnimationTab.tsx";
 export default function PlanetBuilder() {
   const [tab, setTab] = useState<TabId>("palette");
   const [planetSize, setPlanetSize] = useState(28);
+  const [backlightGlow, setBacklightGlow] = useState(15);
 
   // — palette —
   const [customMode, setCustomMode] = useState(false);
@@ -138,11 +139,13 @@ export default function PlanetBuilder() {
             rings={planetRings}
             moons={planetMoons}
             animation={animation}
+            backlightGlow={backlightGlow}
           />
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
           <SliderRow label="Planet size" value={planetSize} min={10} max={42} onChange={setPlanetSize}/>
+          <SliderRow label="Backlight Glow" value={backlightGlow} unit="%" min={0} max={25} onChange={setBacklightGlow}/>
         </div>
       </div>
 

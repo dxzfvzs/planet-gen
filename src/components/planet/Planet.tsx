@@ -61,19 +61,17 @@ export interface PlanetProps {
   planetSize: number;
   /** Gradient stops */
   gradient: GradientStop[];
-  /** Band smudge layer */
   band: SmudgeLayer & {
     /** Opacity on the <g> wrapping the band layer */
     opacity: number;
   };
-  /** Soft smudge layer */
   soft: SmudgeLayer & {
     /** Opacity on the <g> wrapping the soft layer */
     opacity: number;
   };
   rings: PlanetRing[];
   moons: PlanetMoon[];
-  /** Default: jiggle mode with purple-style values */
+  backlightGlow: number;
   animation: AnimationMode;
   /** SVG canvas size in px, default 220 */
   canvasSize?: number;
@@ -102,6 +100,7 @@ export function Planet(
     rings,
     moons,
     animation,
+    backlightGlow,
     canvasSize = 220,
     followSun = false,
   }: PlanetProps) {
@@ -116,7 +115,6 @@ export function Planet(
     () => generateSmudges(soft.seedStr, planetSize, soft.baseColor, soft.count ?? 4),
     [soft.seedStr, planetSize, soft.baseColor, soft.count],
   );
-
 
   const bandLayer = (
     <g clipPath={`url(#${pid}_clip)`} filter="url(#bandBlur)" opacity={band.opacity ?? 1.00}>
@@ -170,7 +168,7 @@ export function Planet(
 
       <AnimationWrapper animation={animation}>
         <RotateToFollowSun enabled={followSun}>
-          <Backlight planetSize={planetSize} key={id}/>
+          <Backlight planetSize={planetSize} key={id} glow={backlightGlow / 100}/>
           <circle cx={0} cy={0} r={planetSize} fill={`url(#${pid}_base)`}/>
         </RotateToFollowSun>
         {bandLayer}
