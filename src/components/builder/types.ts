@@ -26,4 +26,5 @@ export interface RingConfig {
   stroke: string;
   strokeWidth: number;
   strokeOpacity: number;
+  angle: number;
 }

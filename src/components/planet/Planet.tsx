@@ -13,6 +13,7 @@ export interface PlanetRing {
   strokeWidth: number;
   fill?: string;
   strokeOpacity: number;
+  angle: number;
 }
 
 export interface PlanetMoon {
@@ -140,6 +141,7 @@ export function Planet(
       strokeWidth={r.strokeWidth}
       strokeOpacity={r.strokeOpacity}
       mask={`url(#${pid}_occMask)`}
+      transform={`rotate(${r.angle ?? 0})`}
     />
   ));
 

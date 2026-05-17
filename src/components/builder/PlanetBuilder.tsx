@@ -74,6 +74,7 @@ export default function PlanetBuilder() {
       stroke: r.stroke,
       strokeWidth: r.strokeWidth,
       strokeOpacity: r.strokeOpacity,
+      angle: r.angle,
     })),
     [rings],
   );
@@ -163,7 +164,7 @@ export default function PlanetBuilder() {
     const maxRingRx = rings.length ? Math.max(...rings.map(r => r.rx + r.strokeWidth)) : 0;
     const maxMoonRx = moons.length ? Math.max(...moons.map(m => m.orbitRx + m.radius)) : 0;
     const extent = Math.max(planetSize, maxRingRx, maxMoonRx) + backlightGlow + 8;
-    
+
     clone.setAttribute("viewBox", `${-extent} ${-extent} ${extent * 2} ${extent * 2}`);
     clone.removeAttribute("overflow"); // no longer needed
 

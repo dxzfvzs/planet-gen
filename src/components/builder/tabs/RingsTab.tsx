@@ -19,6 +19,7 @@ export function RingsTab({ rings, onChange, minOrbit }: RingsTabProps) {
       stroke: "#b57aee",
       strokeWidth: sw,
       strokeOpacity: 0.5,
+      angle: 0,
     }]);
   }
 
@@ -39,6 +40,8 @@ export function RingsTab({ rings, onChange, minOrbit }: RingsTabProps) {
                      onChange={(v) => updateRing(r.uid, "ry", v)}/>
           <SliderRow label="Width" value={r.strokeWidth} min={0.5} max={5} step={0.5}
                      onChange={(v) => updateRing(r.uid, "strokeWidth", v)}/>
+          <SliderRow label="Angle" value={r.angle} min={0} max={180} step={1}
+                     onChange={(v) => updateRing(r.uid, "angle", v)}/>
           <SliderRow
             label="Opacity"
             value={Math.round(r.strokeOpacity * 100)}

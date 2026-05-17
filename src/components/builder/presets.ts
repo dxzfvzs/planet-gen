@@ -52,8 +52,8 @@ export const BAND_SEED = "c183dc";
 export const SOFT_BAND_SEED = "c183dc";
 
 export const DEFAULT_RINGS = [
-  { uid: uid(), rx: 50, ry: 7, stroke: "#e8b9f8", strokeWidth: 1, strokeOpacity: 0.65 },
-  { uid: uid(), rx: 62, ry: 11, stroke: "#cc61ef", strokeWidth: 2.5, strokeOpacity: 0.35 },
+  { uid: uid(), rx: 50, ry: 7, stroke: "#e8b9f8", strokeWidth: 1, strokeOpacity: 0.65, angle: 0 },
+  { uid: uid(), rx: 62, ry: 11, stroke: "#cc61ef", strokeWidth: 2.5, strokeOpacity: 0.35, angle: 0 },
 ];
 
 export const DEFAULT_MOONS = [
