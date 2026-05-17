@@ -1,7 +1,7 @@
 import { type RingConfig } from "../types.ts";
 import { ColorInput, SliderRow } from "../ui-collection.tsx";
 import { AddCard, ConfigCard } from "../ConfigCard.tsx";
-import { uid } from "../lib.ts";
+import { randHex, uid } from "../lib.ts";
 
 interface RingsTabProps {
   rings: RingConfig[];
@@ -10,16 +10,23 @@ interface RingsTabProps {
 }
 
 export function RingsTab({ rings, onChange, minOrbit }: RingsTabProps) {
+  function randStep(min: number, max: number, step: number = 1) {
+    const steps = Math.floor((max - min) / step);
+    return min + Math.round(Math.random() * steps) * step;
+  }
+
   function add() {
-    const sw = 1.5;
+    const sw = randStep(0.5, 2, 0.5);
+    const rxMin = Math.max(45, minOrbit + sw / 2);
+
     onChange([...rings, {
       uid: uid(),
-      rx: Math.max(45, minOrbit + sw / 2),
-      ry: 6,
-      stroke: "#b57aee",
+      rx: randStep(rxMin, 90),
+      ry: randStep(6, 25),
       strokeWidth: sw,
-      strokeOpacity: 0.5,
-      angle: 0,
+      strokeOpacity: randStep(50, 100) / 100,
+      angle: randStep(0, 180),
+      stroke: randHex(),
     }]);
   }
 
