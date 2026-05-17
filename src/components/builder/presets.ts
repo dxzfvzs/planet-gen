@@ -1,6 +1,6 @@
 import { uid } from "./lib.ts";
 
-interface PlanetPreset {
+export interface PlanetPreset {
   label: string;
   colors: [string, string, string];
 }
@@ -10,33 +10,17 @@ export const PRESETS: Record<string, PlanetPreset> = {
     label: "Nebula",
     colors: ["#b57aee", "#6a28b8", "#241255"],
   },
-  magma: {
-    label: "Magma",
-    colors: ["#ffb8e8", "#d83888", "#6a003a"],
+  bruise: {
+    label: "Bruise",
+    colors: ["#441c73", "#9c3b76", "#9ac4f9"],
   },
-  jungle: {
-    label: "Jungle",
-    colors: ["#b0f070", "#3a8c10", "#155020"],
+  bop: {
+    label: "Paradise",
+    colors: ["#6b01ef", "#630644", "#efd611"],
   },
-  desert: {
-    label: "Desert",
-    colors: ["#edcc7a", "#FFB703", "#7c4803"],
-  },
-  ocean: {
-    label: "Ocean",
-    colors: ["#5abcec", "#1e6ea8", "#003b88"],
-  },
-  ember: {
-    label: "Ember",
-    colors: ["#ff9966", "#cc3311", "#440011"],
-  },
-  arctic: {
-    label: "Arctic",
-    colors: ["#d0f4ff", "#68c8e8", "#003355"],
-  },
-  obsidian: {
-    label: "Obsidian",
-    colors: ["#8888aa", "#333355", "#111122"],
+  sundew: {
+    label: "Sundew",
+    colors: ["#bee9de", "#fab64e", "#cd3a02"],
   },
 };
 

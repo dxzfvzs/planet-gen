@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { type LucideIcon, Shuffle, StepBackIcon } from "lucide-react";
 
 export function Label({ children }: { children: ReactNode }) {
   return (
@@ -119,4 +120,31 @@ export function ColorInput({ value, onChange, label }: {
       </div>
     </div>
   );
+}
+
+export function ClickableButton({ onClick, label, icon: Icon }: {
+  onClick: () => void;
+  label: string;
+  icon: LucideIcon;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="mt-1 p-3 flex items-center gap-2 cursor-pointer
+      text-[10px] font-mono uppercase tracking-widest
+      rounded-xl border border-white/10 bg-white/5
+      hover:bg-white/10"
+    >
+      <Icon size={12}/>
+      {label}
+    </button>
+  );
+}
+
+export function RandomiseButton({ onClick }: { onClick: () => void }) {
+  return <ClickableButton onClick={onClick} icon={Shuffle} label={"Randomise colors"}/>
+}
+
+export function StepBack({ onClick }: { onClick: () => void }) {
+  return <ClickableButton onClick={onClick} icon={StepBackIcon} label={"Undo"}/>
 }
