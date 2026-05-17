@@ -17,7 +17,7 @@ function TrashButton({ onClick }: { onClick: () => void }) {
 
 export function ConfigCard({ title, onRemove, children }: ConfigCardProps) {
   return (
-    <div className="relative w-[13em] rounded-xl border border-white/8 bg-white/3 pt-1 p-3">
+    <div className="relative w-[13.7em] rounded-xl border border-white/8 bg-white/3 pt-1 p-3">
       <div className="absolute -right-2 -top-2">
         <TrashButton onClick={onRemove}/>
       </div>

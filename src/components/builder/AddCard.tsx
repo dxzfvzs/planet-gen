@@ -10,7 +10,7 @@ export function AddCard({ label, onClick }: AddCardProps) {
     <button
       onClick={onClick}
       className="
-        w-[13em] rounded-xl border border-dashed border-white/30
+        w-[13.7em] rounded-xl border border-dashed border-white/30
         bg-white/3 p-3 cursor-pointer
         flex flex-col items-center justify-center gap-2
         min-h-[6em]
