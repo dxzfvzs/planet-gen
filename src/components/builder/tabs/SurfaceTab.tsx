@@ -27,8 +27,8 @@ export function SurfaceTab({
   onSoftCountChange, onSoftOpacityChange, onSoftAngleChange,
 }: SurfaceTabProps) {
   return (
-    <div className="flex gap-5 flex-wrap">
-      <div className="flex-1">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
         <SectionHead>Band layer</SectionHead>
         <div className="mb-2 flex items-center gap-2">
           <div className="flex-1">
@@ -43,7 +43,7 @@ export function SurfaceTab({
         <SliderRow label="Band jiggle" value={bandAngle} min={0} max={20} onChange={onBandAngleChange}/>
       </div>
 
-      <div className="flex-1">
+      <div>
         <SectionHead>Soft layer</SectionHead>
         <div className="mb-2 flex items-center gap-2">
           <div className="flex-1">

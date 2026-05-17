@@ -20,11 +20,16 @@ export function RotatingGroup({ children, duration = 140, invertRotation = false
   );
 }
 
-export function RotateToFollowSun({ children, duration = 50 }: {
+export function RotateToFollowSun({ children, duration = 50, enabled = false }: {
   children: ReactNode;
   duration?: number;
+  enabled?: boolean;
 }) {
-  return <RotatingGroup duration={duration} children={children}/>;
+  return (
+    !enabled
+      ? children
+      : <RotatingGroup duration={duration} children={children}/>
+  );
 }
 
 export function Jiggle({ children, angle = 5, duration = 0.4 }: {

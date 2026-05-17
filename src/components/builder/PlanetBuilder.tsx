@@ -103,8 +103,6 @@ export default function PlanetBuilder() {
     };
   }, [animMode, rotateDuration, invertRotation, bandAngle, softAngle, jiggleOuter, jiggleAngle]);
 
-  const planetKey = `${bandSeed}-${softSeed}-${paletteKey}-${customMode ? `${highlight}${mid}${shadow}` : ""}`;
-
   // — palette handlers —
   function applyPreset(key: string) {
     setPaletteKey(key);
@@ -129,8 +127,7 @@ export default function PlanetBuilder() {
         <div
           className="flex aspect-square items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-10 backdrop-blur-xl">
           <Planet
-            key={planetKey}
-            id={`forge-${planetKey}`}
+            id={`forge-planet`}
             planetSize={planetSize}
             canvasSize={200}
             gradient={gradient}
@@ -165,7 +162,8 @@ export default function PlanetBuilder() {
         </div>
 
         <div className="space-y-5 overflow-y-auto p-4">
-          {tab === "palette" && (
+          <div className={tab !== "palette" ? "hidden" : ""}>
+
             <PaletteTab
               highlight={highlight} mid={mid} shadow={shadow}
               onApplyPreset={applyPreset}
@@ -179,9 +177,9 @@ export default function PlanetBuilder() {
                 setCustomMode(true);
               }}
             />
-          )}
+          </div>
 
-          {tab === "surface" && (
+          <div className={tab !== "surface" ? "hidden" : ""}>
             <SurfaceTab
               bandSeed={bandSeed} softSeed={softSeed}
               bandCount={bandCount} bandAngle={bandAngle}
@@ -190,13 +188,17 @@ export default function PlanetBuilder() {
               onBandCountChange={setBandCount} onBandAngleChange={setBandAngle}
               onSoftCountChange={setSoftCount} onSoftOpacityChange={setSoftOpacity} onSoftAngleChange={setSoftAngle}
             />
-          )}
+          </div>
 
-          {tab === "rings" && <RingsTab onChange={setRings}/>}
+          <div className={tab !== "rings" ? "hidden" : ""}>
+            <RingsTab onChange={setRings}/>
+          </div>
 
-          {tab === "moons" && <MoonsTab onChange={setMoons}/>}
+          <div className={tab !== "moons" ? "hidden" : ""}>
+            <MoonsTab onChange={setMoons}/>
+          </div>
 
-          {tab === "animation" && (
+          <div className={tab !== "animation" ? "hidden" : ""}>
             <AnimationTab
               animMode={animMode}
               jiggleOuter={jiggleOuter} jiggleAngle={jiggleAngle}
@@ -205,7 +207,7 @@ export default function PlanetBuilder() {
               onJiggleOuterChange={setJiggleOuter} onJiggleAngleChange={setJiggleAngle}
               onRotateDurationChange={setRotateDuration} onInvertRotationChange={setInvertRotation}
             />
-          )}
+          </div>
         </div>
       </div>
     </div>

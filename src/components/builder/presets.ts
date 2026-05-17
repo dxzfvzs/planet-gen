@@ -34,6 +34,22 @@ export const PRESETS: Record<string, PlanetPreset> = {
     label: "Dream",
     colors: ["#c183dc", "#154e98", "#7274ff"],
   },
+  feverDream: {
+    label: "Fever Dream",
+    colors: ["#5e0df8", "#10b79b", "#aa7e28"],
+  },
+  jupiter: {
+    label: "Jupiter",
+    colors: ["#bd9271", "#fef377", "#6a0c07"],
+  },
+  glacio: {
+    label: "Glacio",
+    colors: ["#5f59b8", "#0e89ae", "#93e6c8"],
+  },
+  strawberry: {
+    label: "Strawberry",
+    colors: ["#b7f8a4", "#c50b09", "#bb99f4"],
+  },
 };
 
 export const BAND_SEED = "c183dc";
