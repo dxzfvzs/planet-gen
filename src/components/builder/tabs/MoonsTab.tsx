@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { type MoonConfig } from "../types.ts";
 import { ColorInput, SliderRow } from "../ui-collection.tsx";
-import { ConfigCard } from "../ConfigCard.tsx";
-import { AddCard } from "../AddCard.tsx";
+import { AddCard, ConfigCard } from "../ConfigCard.tsx";
 import { uid } from "../lib.ts";
 import { DEFAULT_MOONS } from "../presets.ts";
 
@@ -32,7 +31,7 @@ export function MoonsTab({ initialMoons = DEFAULT_MOONS, onChange }: MoonsTabPro
   }
 
   return (
-    <div className="flex gap-4 flex-wrap">
+    <div className="grid gap-3 justify-start [grid-template-columns:repeat(auto-fill,13.9em)]">
       {moons.map((m, i) => (
         <ConfigCard key={m.uid} title={`Moon ${i + 1}`} onRemove={() => remove(m.uid)}>
           <SliderRow label="Radius" value={m.radius} min={0.5} max={10} step={0.5} onChange={(v) => updateMoon(m.uid, "radius", v)} />

@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { type RingConfig } from "../types.ts";
 import { ColorInput, SliderRow } from "../ui-collection.tsx";
-import { ConfigCard } from "../ConfigCard.tsx";
-import { AddCard } from "../AddCard.tsx";
+import { ConfigCard, AddCard } from "../ConfigCard.tsx";
 import { uid } from "../lib.ts";
 import { DEFAULT_RINGS } from "../presets.ts";
 
@@ -32,7 +31,7 @@ export function RingsTab({ initialRings = DEFAULT_RINGS, onChange }: RingsTabPro
   }
 
   return (
-    <div className="flex gap-4 flex-wrap">
+    <div className="grid gap-3 justify-start [grid-template-columns:repeat(auto-fill,13.9em)]">
       {rings.map((r, i) => (
         <ConfigCard key={r.uid} title={`Ring ${i + 1}`} onRemove={() => remove(r.uid)}>
           <SliderRow label="Orbit X" value={r.rx} min={20} max={90} onChange={(v) => updateRing(r.uid, "rx", v)} />
