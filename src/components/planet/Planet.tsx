@@ -30,7 +30,9 @@ export interface PlanetMoon {
 export interface SmudgeLayer {
   seedStr: string;
   baseColor: string;
-  count?: number;
+  count: number;
+  opacity: number;
+  angle: number;
 }
 
 export interface GradientStop {
@@ -61,14 +63,8 @@ export interface PlanetProps {
   planetSize: number;
   /** Gradient stops */
   gradient: GradientStop[];
-  band: SmudgeLayer & {
-    /** Opacity on the <g> wrapping the band layer */
-    opacity: number;
-  };
-  soft: SmudgeLayer & {
-    /** Opacity on the <g> wrapping the soft layer */
-    opacity: number;
-  };
+  band: SmudgeLayer;
+  soft: SmudgeLayer;
   rings: PlanetRing[];
   moons: PlanetMoon[];
   backlightGlow: number;
@@ -117,7 +113,7 @@ export function Planet(
   );
 
   const bandLayer = (
-    <g clipPath={`url(#${pid}_clip)`} filter="url(#bandBlur)" opacity={band.opacity ?? 1.00}>
+    <g clipPath={`url(#${pid}_clip)`} filter="url(#bandBlur)" opacity={band.opacity ?? 1.00} transform={`rotate(${band.angle})`}>
       {bandSmudges.map((s, i) => (
         <ellipse key={i} cx={s.cx} cy={s.cy} rx={s.rx} ry={s.ry}
                  fill={s.fill} opacity={s.opacity} transform={`rotate(${s.rotate})`}/>
@@ -126,7 +122,7 @@ export function Planet(
   );
 
   const softLayer = (
-    <g clipPath={`url(#${pid}_clip)`} filter="url(#softBlur)" opacity={soft.opacity ?? 0.55}>
+    <g clipPath={`url(#${pid}_clip)`} filter="url(#softBlur)" opacity={soft.opacity ?? 0.55} transform={`rotate(${soft.angle})`}>
       {softSmudges.map((s, i) => (
         <ellipse key={i} cx={s.cx} cy={s.cy} rx={s.rx} ry={s.ry}
                  fill={s.fill} opacity={s.opacity} transform={`rotate(${s.rotate})`}/>

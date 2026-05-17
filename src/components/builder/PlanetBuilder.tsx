@@ -1,4 +1,4 @@
-import { type Dispatch, useMemo, useState } from "react";
+import { type Dispatch, type SetStateAction, useMemo, useState } from "react";
 import { type AnimationMode, Planet } from "../planet/Planet.tsx";
 import { type MoonConfig, type RingConfig, type TabId, TABS } from "./types.ts";
 import { BAND_SEED, DEFAULT_MOONS, DEFAULT_RINGS, PRESETS, SOFT_BAND_SEED } from "./presets.ts";
@@ -29,7 +29,7 @@ export default function PlanetBuilder() {
     seed: SOFT_BAND_SEED, count: 4, opacity: 55, angle: 15,
   });
 
-  function layerHandlers(setter: Dispatch<React.SetStateAction<LayerConfig>>): LayerConfigHandlers {
+  function layerHandlers(setter: Dispatch<SetStateAction<LayerConfig>>): LayerConfigHandlers {
     return {
       onSeedChange: (v) => setter(p => ({ ...p, seed: v })),
       onCountChange: (v) => setter(p => ({ ...p, count: v })),
@@ -134,8 +134,20 @@ export default function PlanetBuilder() {
             planetSize={planetSize}
             canvasSize={200}
             gradient={gradient}
-            band={{ seedStr: band.seed, baseColor: colors[2], count: band.count, opacity: band.opacity / 100 }}
-            soft={{ seedStr: soft.seed, baseColor: colors[0], count: soft.count, opacity: soft.opacity / 100 }}
+            band={{
+              seedStr: band.seed,
+              baseColor: colors[2],
+              count: band.count,
+              opacity: band.opacity / 100,
+              angle: band.angle
+            }}
+            soft={{
+              seedStr: soft.seed,
+              baseColor: colors[0],
+              count: soft.count,
+              opacity: soft.opacity / 100,
+              angle: soft.angle
+            }}
             rings={planetRings}
             moons={planetMoons}
             animation={animation}
@@ -145,7 +157,8 @@ export default function PlanetBuilder() {
 
         <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
           <SliderRow label="Planet size" value={planetSize} min={10} max={42} onChange={setPlanetSize}/>
-          <SliderRow label="Backlight Glow" value={backlightGlow} unit="%" min={0} max={25} onChange={setBacklightGlow}/>
+          <SliderRow label="Backlight Glow" value={backlightGlow} unit="%" min={0} max={25}
+                     onChange={setBacklightGlow}/>
         </div>
       </div>
 
