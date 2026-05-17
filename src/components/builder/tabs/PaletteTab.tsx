@@ -1,4 +1,5 @@
-import { ColorInput, RandomiseButton, SectionHead } from "../ui-collection.tsx";
+import { useState } from "react";
+import { ColorInput, RandomiseButton, SectionHead, StepBack } from "../ui-collection.tsx";
 import { type PlanetPreset, PRESETS } from "../presets.ts";
 import { randHex } from "../lib.ts";
 
@@ -12,6 +13,14 @@ interface PaletteTabProps {
   onShadowChange: (v: string) => void;
   onRandomise: (h: string, m: string, s: string) => void;
 }
+
+interface PaletteState {
+  highlight: string;
+  mid: string;
+  shadow: string;
+}
+
+const HISTORY_LIMIT = 5;
 
 function PresetButton({ onClick, key, p }: {
   onClick: () => void;
@@ -35,36 +44,85 @@ function PresetButton({ onClick, key, p }: {
   );
 }
 
+export function PaletteTab(
+  {
+    highlight,
+    mid,
+    shadow,
+    onApplyPreset,
+    onHighlightChange,
+    onMidChange,
+    onShadowChange,
+    onRandomise,
+  }: PaletteTabProps) {
+  const [history, setHistory] = useState<PaletteState[]>([]);
 
-export function PaletteTab({
-  highlight,
-  mid,
-  shadow,
-  onApplyPreset,
-  onHighlightChange,
-  onMidChange,
-  onShadowChange,
-  onRandomise,
-}: PaletteTabProps) {
+  function pushHistory() {
+    setHistory((prev) =>
+      [{ highlight, mid, shadow }, ...prev]
+        .slice(0, HISTORY_LIMIT)
+    );
+  }
+
+  function handleUndo() {
+    const previous = history[0];
+    if (!previous) return;
+
+    onHighlightChange(previous.highlight);
+    onMidChange(previous.mid);
+    onShadowChange(previous.shadow);
+
+    setHistory((prev) => prev.slice(1));
+  }
+
+  function handleHighlightChange(v: string) {
+    pushHistory();
+    onHighlightChange(v);
+  }
+
+  function handleMidChange(v: string) {
+    pushHistory();
+    onMidChange(v);
+  }
+
+  function handleShadowChange(v: string) {
+    pushHistory();
+    onShadowChange(v);
+  }
+
+  function handlePreset(key: string) {
+    pushHistory();
+    onApplyPreset(key);
+  }
+
+  function handleRandomise() {
+    pushHistory();
+
+    onRandomise(randHex(), randHex(), randHex());
+  }
+
   return (
     <div className="space-y-4">
       <SectionHead>Presets</SectionHead>
 
       <div className="flex flex-row flex-wrap gap-2">
         {Object.entries(PRESETS).map(([key, p]) => (
-          <PresetButton key={key} onClick={() => onApplyPreset(key)} p={p}/>
+          <PresetButton key={key} onClick={() => handlePreset(key)} p={p}/>
         ))}
       </div>
 
       <SectionHead>Custom</SectionHead>
 
       <div className="space-y-2">
-        <ColorInput label="Highlight" value={highlight} onChange={onHighlightChange}/>
-        <ColorInput label="Mid" value={mid} onChange={onMidChange}/>
-        <ColorInput label="Shadow" value={shadow} onChange={onShadowChange}/>
+        <ColorInput label="Highlight" value={highlight} onChange={handleHighlightChange}/>
+        <ColorInput label="Mid" value={mid} onChange={handleMidChange}/>
+        <ColorInput label="Shadow" value={shadow} onChange={handleShadowChange}/>
       </div>
 
-      <RandomiseButton onClick={() => onRandomise(randHex(), randHex(), randHex())}/>
+      <div className="flex flex-wrap gap-2">
+        <RandomiseButton onClick={handleRandomise}/>
+        <StepBack onClick={handleUndo} disabled={history.length === 0}/>
+      </div>
     </div>
   );
 }

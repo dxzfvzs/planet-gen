@@ -122,18 +122,22 @@ export function ColorInput({ value, onChange, label }: {
   );
 }
 
-export function ClickableButton({ onClick, label, icon: Icon }: {
+export function ClickableButton({ onClick, label, icon: Icon, disabled }: {
   onClick: () => void;
   label: string;
   icon: LucideIcon;
+  disabled?: boolean;
 }) {
   return (
     <button
       onClick={onClick}
-      className="mt-1 p-3 flex items-center gap-2 cursor-pointer
-      text-[10px] font-mono uppercase tracking-widest
-      rounded-xl border border-white/10 bg-white/5
-      hover:bg-white/10"
+      disabled={disabled}
+      className={`
+        mt-1 p-3 flex items-center gap-2 transition
+        text-[10px] font-mono uppercase tracking-widest
+        rounded-xl border border-white/10 bg-white/5 hover:bg-white/10
+        disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white/5
+      `}
     >
       <Icon size={12}/>
       {label}
@@ -141,10 +145,10 @@ export function ClickableButton({ onClick, label, icon: Icon }: {
   );
 }
 
-export function RandomiseButton({ onClick }: { onClick: () => void }) {
-  return <ClickableButton onClick={onClick} icon={Shuffle} label={"Randomise colors"}/>
+export function RandomiseButton({ onClick, disabled }: { onClick: () => void, disabled?: boolean }) {
+  return <ClickableButton onClick={onClick} icon={Shuffle} label={"Randomise colors"} disabled={disabled}/>
 }
 
-export function StepBack({ onClick }: { onClick: () => void }) {
-  return <ClickableButton onClick={onClick} icon={StepBackIcon} label={"Undo"}/>
+export function StepBack({ onClick, disabled }: { onClick: () => void, disabled?: boolean }) {
+  return <ClickableButton onClick={onClick} icon={StepBackIcon} label={"Undo"} disabled={disabled}/>
 }
