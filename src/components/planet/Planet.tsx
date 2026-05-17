@@ -81,7 +81,10 @@ export interface PlanetProps {
   /** Gradient stops */
   gradient: GradientStop[];
   /** Band smudge layer */
-  band: SmudgeLayer;
+  band: SmudgeLayer & {
+    /** Opacity on the <g> wrapping the band layer, default 1 */
+    opacity?: number;
+  };
   /** Soft smudge layer */
   soft: SmudgeLayer & {
     /** Opacity on the <g> wrapping the soft layer, default 0.55 */
@@ -93,6 +96,8 @@ export interface PlanetProps {
   animation?: AnimationMode;
   /** SVG canvas size in px, default 220 */
   canvasSize?: number;
+  /** Whether to make the core of the planet rotate to follow sun, affects moons as well */
+  followSun?: boolean;
 }
 
 export function Planet({
@@ -105,6 +110,7 @@ export function Planet({
                          moons = [],
                          animation = { type: "jiggle" },
                          canvasSize = 220,
+                         followSun = false,
                        }: PlanetProps) {
   const pid = `planet_${id}`;
 
@@ -119,9 +125,10 @@ export function Planet({
   );
 
   const softOpacity = soft.opacity ?? 0.55;
+  const bandOpacity = band.opacity ?? 1.00;
 
   const bandLayer = (
-    <g clipPath={`url(#${pid}_clip)`} filter="url(#bandBlur)">
+    <g clipPath={`url(#${pid}_clip)`} filter="url(#bandBlur)" opacity={bandOpacity}>
       {bandSmudges.map((s, i) => (
         <ellipse key={i} cx={s.cx} cy={s.cy} rx={s.rx} ry={s.ry}
                  fill={s.fill} opacity={s.opacity} transform={`rotate(${s.rotate})`}/>
@@ -206,7 +213,7 @@ export function Planet({
         </mask>
       </defs>
 
-      <RotateToFollowSun>
+      <RotateToFollowSun enabled={followSun}>
         <Backlight planetSize={planetSize} key={id}/>
         <circle cx={0} cy={0} r={planetSize} fill={`url(#${pid}_base)`}/>
       </RotateToFollowSun>
@@ -229,6 +236,7 @@ export function Planet({
                   begin={m.begin ?? 0}
                   baseId={m.baseId ?? "moonBase"}
                   color={m.color}
+                  followSun={followSun}
                 />
               ))}
             </g>

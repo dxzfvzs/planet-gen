@@ -7,11 +7,13 @@ interface SurfaceTabProps {
   bandCount: number;
   bandAngle: number;
   softCount: number;
+  bandOpacity: number;
   softOpacity: number;
   softAngle: number;
   onBandSeedChange: (v: string) => void;
   onSoftSeedChange: (v: string) => void;
   onBandCountChange: (v: number) => void;
+  onBandOpacityChange: (v: number) => void;
   onBandAngleChange: (v: number) => void;
   onSoftCountChange: (v: number) => void;
   onSoftOpacityChange: (v: number) => void;
@@ -20,10 +22,10 @@ interface SurfaceTabProps {
 
 export function SurfaceTab({
   bandSeed, softSeed,
-  bandCount, bandAngle,
+  bandCount, bandOpacity, bandAngle,
   softCount, softOpacity, softAngle,
   onBandSeedChange, onSoftSeedChange,
-  onBandCountChange, onBandAngleChange,
+  onBandCountChange, onBandOpacityChange, onBandAngleChange,
   onSoftCountChange, onSoftOpacityChange, onSoftAngleChange,
 }: SurfaceTabProps) {
   return (
@@ -39,7 +41,7 @@ export function SurfaceTab({
         </div>
 
         <SliderRow label="Band density" value={bandCount} min={2} max={30} onChange={onBandCountChange}/>
-        <SliderRow label="Band opacity" value={softOpacity} min={5} max={100} unit="%" onChange={onSoftOpacityChange}/>
+        <SliderRow label="Band opacity" value={bandOpacity} min={0} max={100} unit="%" onChange={onBandOpacityChange}/>
         <SliderRow label="Band jiggle" value={bandAngle} min={0} max={20} onChange={onBandAngleChange}/>
       </div>
 
@@ -54,7 +56,7 @@ export function SurfaceTab({
         </div>
 
         <SliderRow label="Soft count" value={softCount} min={1} max={10} onChange={onSoftCountChange}/>
-        <SliderRow label="Soft opacity" value={softOpacity} min={5} max={100} unit="%" onChange={onSoftOpacityChange}/>
+        <SliderRow label="Soft opacity" value={softOpacity} min={0} max={100} unit="%" onChange={onSoftOpacityChange}/>
         <SliderRow label="Soft jiggle" value={softAngle} min={0} max={30} onChange={onSoftAngleChange}/>
       </div>
     </div>

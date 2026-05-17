@@ -13,6 +13,7 @@ type MoonProps = {
   begin?: number
   baseId: string,
   color?: string,
+  followSun?: boolean
 }
 
 const debug = false;
@@ -29,7 +30,8 @@ export function Moon(
     id,
     begin = 0,
     baseId = "moonBase",
-    color
+    color,
+    followSun = false,
   }: MoonProps) {
   const orbitId = `orbit-${id}-${baseId}`
   const d = `M 0 0 m ${-orbitRx + orbitOffsetX} ${orbitOffsetY} a ${orbitRx} ${orbitRy} ${orbitTilt} 1 1 ${orbitRx * 2} 0 a ${orbitRx} ${orbitRy} ${orbitTilt} 1 1 ${-orbitRx * 2} 0`
@@ -53,7 +55,7 @@ export function Moon(
         <mpath href={`#${orbitId}`}/>
       </animateMotion>
 
-      <RotateToFollowSun>
+      <RotateToFollowSun enabled={followSun}>
         <g>
           <circle r={radius} fill={`url(#${baseId})`}/>
 

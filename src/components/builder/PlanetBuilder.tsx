@@ -28,6 +28,7 @@ export default function PlanetBuilder() {
   const [bandCount, setBandCount] = useState(12);
   const [softCount, setSoftCount] = useState(4);
   const [softOpacity, setSoftOpacity] = useState(55);
+  const [bandOpacity, setBandOpacity] = useState(100);
 
   // — rings & moons (final arrays only) —
   const [rings, setRings] = useState<RingConfig[]>(DEFAULT_RINGS);
@@ -131,7 +132,7 @@ export default function PlanetBuilder() {
             planetSize={planetSize}
             canvasSize={200}
             gradient={gradient}
-            band={{ seedStr: bandSeed, baseColor: colors[2], count: bandCount }}
+            band={{ seedStr: bandSeed, baseColor: colors[2], count: bandCount, opacity: bandOpacity / 100 }}
             soft={{ seedStr: softSeed, baseColor: colors[0], count: softCount, opacity: softOpacity / 100 }}
             rings={planetRings}
             moons={planetMoons}
@@ -182,10 +183,10 @@ export default function PlanetBuilder() {
           <div className={tab !== "surface" ? "hidden" : ""}>
             <SurfaceTab
               bandSeed={bandSeed} softSeed={softSeed}
-              bandCount={bandCount} bandAngle={bandAngle}
+              bandCount={bandCount} bandOpacity={bandOpacity} bandAngle={bandAngle}
               softCount={softCount} softOpacity={softOpacity} softAngle={softAngle}
               onBandSeedChange={setBandSeed} onSoftSeedChange={setSoftSeed}
-              onBandCountChange={setBandCount} onBandAngleChange={setBandAngle}
+              onBandCountChange={setBandCount} onBandOpacityChange={setBandOpacity} onBandAngleChange={setBandAngle}
               onSoftCountChange={setSoftCount} onSoftOpacityChange={setSoftOpacity} onSoftAngleChange={setSoftAngle}
             />
           </div>
