@@ -5,13 +5,10 @@ import { type ReactNode, useMemo } from "react";
 import { generateSmudges } from "./smudge-helper.ts";
 
 export interface PlanetRing {
-  cx?: number;
-  cy?: number;
   rx: number;
   ry: number;
   stroke: string;
   strokeWidth: number;
-  fill?: string;
   strokeOpacity: number;
   angle: number;
 }
@@ -25,7 +22,6 @@ export interface PlanetMoon {
   duration: string;
   begin?: number;
   color?: string;
-  baseId?: string;
 }
 
 export interface SmudgeLayer {
@@ -53,7 +49,12 @@ type RotateAnimation = {
   invertRotation?: boolean;
 }
 
-export type AnimationMode = JiggleAnimation | RotateAnimation;
+type StaticAnimation = {
+  type: "static";
+  angle: number;
+}
+
+export type AnimationMode = JiggleAnimation | RotateAnimation | StaticAnimation;
 
 export interface PlanetProps {
   /**
@@ -76,16 +77,28 @@ export interface PlanetProps {
   followSun?: boolean;
 }
 
-const AnimationWrapper = ({ animation, children }: { animation: AnimationMode; children: ReactNode }) =>
-  animation.type === "rotate" ? (
-    <RotatingGroup duration={animation.duration} invertRotation={animation.invertRotation ?? false}>
-      {children}
-    </RotatingGroup>
-  ) : (
-    <Jiggle duration={animation.duration ?? 25} angle={animation.angle ?? 15}>
-      {children}
-    </Jiggle>
-  );
+const AnimationWrapper = ({ animation, children }: { animation: AnimationMode; children: ReactNode }) => {
+  switch (animation.type) {
+    case "jiggle":
+      return (
+        <Jiggle duration={animation.duration ?? 25} angle={animation.angle ?? 15}>
+          {children}
+        </Jiggle>
+      )
+    case "rotate":
+      return (
+        <RotatingGroup duration={animation.duration || 0} invertRotation={animation.invertRotation ?? false}>
+          {children}
+        </RotatingGroup>
+      );
+    case "static":
+      return (
+        <Jiggle duration={0} angle={animation.angle ?? 0}>
+          {children}
+        </Jiggle>
+      );
+  }
+};
 
 export function Planet(
   {
@@ -114,7 +127,8 @@ export function Planet(
   );
 
   const bandLayer = (
-    <g clipPath={`url(#${pid}_clip)`} filter="url(#bandBlur)" opacity={band.opacity ?? 1.00} transform={`rotate(${band.angle})`}>
+    <g clipPath={`url(#${pid}_clip)`} filter="url(#bandBlur)" opacity={band.opacity ?? 1.00}
+       transform={`rotate(${band.angle})`}>
       {bandSmudges.map((s, i) => (
         <ellipse key={i} cx={s.cx} cy={s.cy} rx={s.rx} ry={s.ry}
                  fill={s.fill} opacity={s.opacity} transform={`rotate(${s.rotate})`}/>
@@ -123,7 +137,8 @@ export function Planet(
   );
 
   const softLayer = (
-    <g clipPath={`url(#${pid}_clip)`} filter="url(#softBlur)" opacity={soft.opacity ?? 0.55} transform={`rotate(${soft.angle})`}>
+    <g clipPath={`url(#${pid}_clip)`} filter="url(#softBlur)" opacity={soft.opacity ?? 0.55}
+       transform={`rotate(${soft.angle})`}>
       {softSmudges.map((s, i) => (
         <ellipse key={i} cx={s.cx} cy={s.cy} rx={s.rx} ry={s.ry}
                  fill={s.fill} opacity={s.opacity} transform={`rotate(${s.rotate})`}/>
@@ -134,9 +149,9 @@ export function Planet(
   const ringLayer = rings.map((r, i) => (
     <ellipse
       key={i}
-      cx={r.cx ?? 0} cy={r.cy ?? 2.5}
+      cx={0} cy={2.5}
       rx={r.rx} ry={r.ry}
-      fill={r.fill ?? "none"}
+      fill={"none"}
       stroke={r.stroke}
       strokeWidth={r.strokeWidth}
       strokeOpacity={r.strokeOpacity}
@@ -208,7 +223,7 @@ export function Planet(
                 radius={m.radius}
                 duration={m.duration}
                 begin={m.begin ?? 0}
-                baseId={m.baseId ?? "moonBase"}
+                baseId={"moonBase"}
                 color={m.color}
                 followSun={followSun}
               />
