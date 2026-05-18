@@ -61,5 +61,5 @@ export const DEFAULT_RINGS = [
 ];
 
 export const DEFAULT_MOONS = [
-  { uid: uid(), orbitRx: 55, orbitRy: 15, orbitTilt: -3, radius: 2.8, durationS: 7, begin: -6, color: "#ffb8e8" },
+  { id: uid(), orbitRx: 55, orbitRy: 15, orbitTilt: -3, radius: 2.8, durationS: 7, begin: -6, color: "#ffb8e8" },
 ];

@@ -64,22 +64,9 @@ export default function PlanetBuilder() {
     [colors],
   );
 
-  const planetRings = useMemo(
-    () => rings.map((r) => ({
-      rx: r.rx,
-      ry: r.ry,
-      stroke: r.stroke,
-      strokeWidth: r.strokeWidth,
-      strokeOpacity: r.strokeOpacity,
-      angle: r.angle,
-    })),
-    [rings],
-  );
-
   const planetMoons = useMemo(
     () => moons.map((m) => ({
       ...m,
-      id: m.uid,
       duration: `${m.durationS}s`,
     })),
     [moons],
@@ -196,7 +183,7 @@ export default function PlanetBuilder() {
               opacity: soft.opacity / 100,
               angle: soft.angle,
             }}
-            rings={planetRings}
+            rings={rings}
             moons={planetMoons}
             animation={animation}
             backlightGlow={backlightGlow}

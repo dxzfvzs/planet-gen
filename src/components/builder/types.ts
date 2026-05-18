@@ -9,7 +9,7 @@ export const TABS: { id: TabId; label: string }[] = [
 ];
 
 export interface MoonConfig {
-  uid: string;
+  id: string;
   orbitRx: number;
   orbitRy: number;
   orbitTilt: number;
