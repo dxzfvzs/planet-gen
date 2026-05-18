@@ -42,7 +42,7 @@ export function RingsTab({ rings, onChange, minOrbit }: RingsTabProps) {
     <div className="grid gap-3 justify-start [grid-template-columns:repeat(auto-fill,13.9em)]">
       {rings.map((r, i) => (
         <ConfigCard key={r.uid} title={`Ring ${i + 1}`} onRemove={() => remove(r.uid)}>
-          <SliderRow label="Orbit X" value={r.rx} min={minOrbit} max={90} onChange={(v) => updateRing(r.uid, "rx", v)}/>
+          <SliderRow label="Orbit X" value={r.rx} min={minOrbit + r.strokeWidth * 2} max={90} onChange={(v) => updateRing(r.uid, "rx", v)}/>
           <SliderRow label="Orbit Y" value={r.ry} min={6} max={25}
                      onChange={(v) => updateRing(r.uid, "ry", v)}/>
           <SliderRow label="Width" value={r.strokeWidth} min={0.5} max={5} step={0.5}
