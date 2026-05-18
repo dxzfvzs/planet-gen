@@ -103,16 +103,14 @@ export function PaletteTab(
 
   return (
     <div className="space-y-4">
-      <SectionHead>Presets</SectionHead>
-
+      <SectionHead>Color Presets</SectionHead>
       <div className="flex flex-row flex-wrap gap-2">
         {Object.entries(PRESETS).map(([key, p]) => (
           <PresetButton key={key} onClick={() => handlePreset(key)} p={p}/>
         ))}
       </div>
 
-      <SectionHead>Custom</SectionHead>
-
+      <SectionHead>Custom Colors</SectionHead>
       <div className="space-y-2">
         <ColorInput label="Highlight" value={highlight} onChange={handleHighlightChange}/>
         <ColorInput label="Mid" value={mid} onChange={handleMidChange}/>
@@ -120,7 +118,7 @@ export function PaletteTab(
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <RandomiseButton onClick={handleRandomise}/>
+        <RandomiseButton onClick={handleRandomise} label={"Randomise Colors"}/>
         <StepBack onClick={handleUndo} disabled={history.length === 0}/>
       </div>
     </div>

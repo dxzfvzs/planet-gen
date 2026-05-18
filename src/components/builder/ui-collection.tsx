@@ -160,8 +160,8 @@ export function ClickableButton({ onClick, label, icon: Icon, disabled, classNam
   );
 }
 
-export function RandomiseButton({ onClick, disabled }: { onClick: () => void, disabled?: boolean }) {
-  return <ClickableButton onClick={onClick} icon={Shuffle} label={"Randomise colors"} disabled={disabled}/>
+export function RandomiseButton({ onClick, disabled, label }: { onClick: () => void, disabled?: boolean, label: string }) {
+  return <ClickableButton onClick={onClick} icon={Shuffle} label={label} disabled={disabled}/>
 }
 
 export function StepBack({ onClick, disabled }: { onClick: () => void, disabled?: boolean }) {

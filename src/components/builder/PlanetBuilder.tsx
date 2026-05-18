@@ -8,6 +8,7 @@ import { type LayerConfig, type LayerConfigHandlers, SurfaceTab } from "./tabs/S
 import { RingsTab } from "./tabs/RingsTab.tsx";
 import { MoonsTab } from "./tabs/MoonsTab.tsx";
 import { AnimationTab, type AnimationType } from "./tabs/AnimationTab.tsx";
+import { PresetTab } from "./tabs/PresetTab.tsx";
 
 export default function PlanetBuilder() {
   const [tab, setTab] = useState<TabId>("palette");
@@ -219,13 +220,25 @@ export default function PlanetBuilder() {
           ))}
         </div>
 
-        <div className="tab-content space-y-5 overflow-y-auto flex-1 p-4
+        <div className="tab-content overflow-y-auto flex-1 p-4
         [--fade:12px]
         [-webkit-mask-image:linear-gradient(to_bottom,transparent_0,black_var(--fade),black_calc(100%-var(--fade)),transparent_100%)]
         [mask-image:linear-gradient(to_bottom,transparent_0,black_var(--fade),black_calc(100%-var(--fade)),transparent_100%)]
         ">
-          <div className={tab !== "palette" ? "hidden" : ""}>
 
+          <div className={tab !== "preset" ? "hidden" : ""}>
+            <PresetTab
+              onApplyPreset={applyPreset}
+              onRandomise={(h, m, s) => {
+                setHighlight(h);
+                setMid(m);
+                setShadow(s);
+                setCustomMode(true);
+              }}
+            />
+          </div>
+
+          <div className={tab !== "palette" ? "hidden" : ""}>
             <PaletteTab
               highlight={highlight} mid={mid} shadow={shadow}
               onApplyPreset={applyPreset}

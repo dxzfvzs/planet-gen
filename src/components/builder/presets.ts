@@ -3,52 +3,88 @@ import { uid } from "./lib.ts";
 export interface PlanetPreset {
   label: string;
   colors: [string, string, string];
+  size: number;
+  backlightGlow: number;
 }
 
 export const PRESETS: Record<string, PlanetPreset> = {
   nebula: {
     label: "Nebula",
     colors: ["#b57aee", "#6a28b8", "#241255"],
+    size: 28,
+    backlightGlow: 15,
   },
   bruise: {
     label: "Bruise",
     colors: ["#441c73", "#9c3b76", "#9ac4f9"],
+    size: 28,
+    backlightGlow: 15,
   },
   bop: {
     label: "Paradise",
     colors: ["#6b01ef", "#630644", "#efd611"],
+    size: 28,
+    backlightGlow: 15,
   },
   onyx: {
     label: "Onyx",
     colors: ["#7c3ddc", "#0f85a5", "#391c3a"],
+    size: 28,
+    backlightGlow: 15,
   },
   dream: {
     label: "Dream",
     colors: ["#c183dc", "#154e98", "#7274ff"],
+    size: 28,
+    backlightGlow: 15,
   },
   feverDream: {
     label: "Fever Dream",
     colors: ["#5e0df8", "#10b79b", "#aa7e28"],
+    size: 28,
+    backlightGlow: 15,
   },
   jupiter: {
     label: "Jupiter",
     colors: ["#bd9271", "#fef377", "#6a0c07"],
+    size: 28,
+    backlightGlow: 15,
   },
   glacio: {
     label: "Glacio",
     colors: ["#5f59b8", "#0e89ae", "#93e6c8"],
+    size: 28,
+    backlightGlow: 15,
   },
   munchkin: {
     label: "Munchkin",
     colors: ["#b7f8a4", "#c50b09", "#bb99f4"],
+    size: 28,
+    backlightGlow: 15,
   },
   berries: {
     label: "Berries",
     colors: ["#88380f", "#5804c1", "#a43526"],
+    size: 28,
+    backlightGlow: 15,
   },
   mars: {
     label: "Mars",
     colors: ["#c9cd5a", "#c04a2e", "#312624"],
+    size: 28,
+    backlightGlow: 15,
+  },
+  noxious: {
+    label: "Noxious",
+    colors: ["#313f35", "#d6d7fb", "#c0de08"],
+    size: 28,
+    backlightGlow: 15,
+  },
+  pinkMonster: {
+    label: "Pink Monster",
+    colors: ["#0b577b", "#af1473", "#081512"],
+    size: 28,
+    backlightGlow: 15,
   },
 };
 
