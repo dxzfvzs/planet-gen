@@ -218,8 +218,9 @@ export default function PlanetBuilder() {
       </div>
 
       {/* right: tab panel */}
-      <div className="flex-1 min-w-0 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl max-h-[70vh] overflow-hidden flex flex-col">
-        <div className="flex border-b border-white/10 shrink-0">
+      <div
+        className="flex-1 min-w-0 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl max-h-[40em] min-h-[30em] overflow-hidden flex flex-col">
+        <div className="flex border-b border-white/10 shrink-0 ">
           {TABS.map((t) => (
             <button
               key={t.id}
@@ -234,7 +235,11 @@ export default function PlanetBuilder() {
           ))}
         </div>
 
-        <div className="tab-content space-y-5 overflow-y-auto flex-1 p-4">
+        <div className="tab-content space-y-5 overflow-y-auto flex-1 p-4
+        [--fade:12px]
+        [-webkit-mask-image:linear-gradient(to_bottom,transparent_0,black_var(--fade),black_calc(100%-var(--fade)),transparent_100%)]
+        [mask-image:linear-gradient(to_bottom,transparent_0,black_var(--fade),black_calc(100%-var(--fade)),transparent_100%)]
+        ">
           <div className={tab !== "palette" ? "hidden" : ""}>
 
             <PaletteTab
