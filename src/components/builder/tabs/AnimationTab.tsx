@@ -1,12 +1,14 @@
 import { ToggleButton, SectionHead, SliderRow } from "../ui-collection.tsx";
 
+export type AnimationType = "jiggle" | "rotate" | "static";
+
 interface AnimationTabProps {
-  animMode: "jiggle" | "rotate";
+  animMode: AnimationType;
   jiggleDuration: number;
   jiggleAngle: number;
   rotateDuration: number;
   invertRotation: boolean;
-  onAnimModeChange: (mode: "jiggle" | "rotate") => void;
+  onAnimModeChange: (mode: AnimationType) => void;
   onJiggleDurationChange: (v: number) => void;
   onJiggleAngleChange: (v: number) => void;
   onRotateDurationChange: (v: number) => void;
@@ -28,6 +30,7 @@ export function AnimationTab({
       <div className="flex gap-2">
         <ToggleButton active={animMode === "jiggle"} onClick={() => onAnimModeChange("jiggle")}>Jiggle</ToggleButton>
         <ToggleButton active={animMode === "rotate"} onClick={() => onAnimModeChange("rotate")}>Rotate</ToggleButton>
+        <ToggleButton active={animMode === "static"} onClick={() => onAnimModeChange("static")}>Static</ToggleButton>
       </div>
 
       {animMode === "jiggle" && (
@@ -46,6 +49,13 @@ export function AnimationTab({
             <ToggleButton active={!invertRotation} onClick={() => onInvertRotationChange(false)}>→ Prograde</ToggleButton>
             <ToggleButton active={invertRotation} onClick={() => onInvertRotationChange(true)}>← Retrograde</ToggleButton>
           </div>
+        </>
+      )}
+
+      {animMode === "static" && (
+        <>
+          <SectionHead>Static settings</SectionHead>
+          <SliderRow label="Angle" value={jiggleAngle} min={0} max={360} unit="°" onChange={onJiggleAngleChange} />
         </>
       )}
     </div>

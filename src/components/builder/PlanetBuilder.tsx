@@ -7,7 +7,7 @@ import { PaletteTab } from "./tabs/PaletteTab.tsx";
 import { type LayerConfig, type LayerConfigHandlers, SurfaceTab } from "./tabs/SurfaceTab.tsx";
 import { RingsTab } from "./tabs/RingsTab.tsx";
 import { MoonsTab } from "./tabs/MoonsTab.tsx";
-import { AnimationTab } from "./tabs/AnimationTab.tsx";
+import { AnimationTab, type AnimationType } from "./tabs/AnimationTab.tsx";
 
 export default function PlanetBuilder() {
   const [tab, setTab] = useState<TabId>("palette");
@@ -43,7 +43,7 @@ export default function PlanetBuilder() {
   const [moons, setMoons] = useState<MoonConfig[]>(DEFAULT_MOONS);
 
   // — animation —
-  const [animMode, setAnimMode] = useState<"jiggle" | "rotate">("jiggle");
+  const [animMode, setAnimMode] = useState<AnimationType>("jiggle");
   const [jiggleDuration, setJiggleDuration] = useState(25);
   const [jiggleAngle, setJiggleAngle] = useState(15);
   const [rotateDuration, setRotateDuration] = useState(40);
@@ -91,11 +91,17 @@ export default function PlanetBuilder() {
       duration: rotateDuration,
       invertRotation,
     };
-    return {
+    if (animMode === "jiggle") return {
       type: "jiggle" as const,
       duration: jiggleDuration,
       angle: jiggleAngle,
     };
+    return {
+      type: "static" as const,
+      duration: 0,
+      angle: jiggleAngle,
+    };
+
   }, [animMode, rotateDuration, invertRotation, jiggleDuration, jiggleAngle]);
 
   // — handlers —
