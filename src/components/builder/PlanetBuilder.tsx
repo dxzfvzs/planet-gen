@@ -218,8 +218,8 @@ export default function PlanetBuilder() {
       </div>
 
       {/* right: tab panel */}
-      <div className="flex-1 min-w-0 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
-        <div className="flex border-b border-white/10">
+      <div className="flex-1 min-w-0 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl max-h-[70vh] overflow-hidden flex flex-col">
+        <div className="flex border-b border-white/10 shrink-0">
           {TABS.map((t) => (
             <button
               key={t.id}
@@ -234,7 +234,7 @@ export default function PlanetBuilder() {
           ))}
         </div>
 
-        <div className="space-y-5 overflow-y-auto p-4">
+        <div className="tab-content space-y-5 overflow-y-auto flex-1 p-4">
           <div className={tab !== "palette" ? "hidden" : ""}>
 
             <PaletteTab
