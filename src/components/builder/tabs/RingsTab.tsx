@@ -2,7 +2,7 @@ import { type RingConfig } from "../types.ts";
 import { ColorInput, SliderRow } from "../ui-collection.tsx";
 import { AddCard, ConfigCard } from "../ConfigCard.tsx";
 import { randHex, uid } from "../lib.ts";
-import { usePlanet } from "../PlanetContext.tsx";
+import { usePlanet } from "../usePlanet.ts";
 
 export function RingsTab() {
   const { rings, handleRingsChange, minOrbit } = usePlanet();

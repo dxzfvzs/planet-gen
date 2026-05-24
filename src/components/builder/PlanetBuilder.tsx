@@ -1,14 +1,16 @@
 import { useMemo } from "react";
 import { type AnimationMode, Planet } from "../planet/Planet.tsx";
 import { TABS } from "./types.ts";
-import { PlanetProvider, usePlanet } from "./PlanetContext.tsx";
-import { DownloadButton, SliderRow } from "./ui-collection.tsx";
+import { PlanetProvider } from "./PlanetContext.tsx";
+import { usePlanet } from "./usePlanet.ts";
+import { ClickableButton, DownloadButton, SliderRow } from "./ui-collection.tsx";
 import { PaletteTab } from "./tabs/PaletteTab.tsx";
 import { SurfaceTab } from "./tabs/SurfaceTab.tsx";
 import { RingsTab } from "./tabs/RingsTab.tsx";
 import { MoonsTab } from "./tabs/MoonsTab.tsx";
 import { AnimationTab } from "./tabs/AnimationTab.tsx";
 import { PresetTab } from "./tabs/PresetTab.tsx";
+import { Redo, SaveIcon, Undo } from "lucide-react";
 
 function PlanetBuilderInner() {
   const {
@@ -23,6 +25,9 @@ function PlanetBuilderInner() {
     jiggleAngle, setJiggleAngle,
     rotateDuration, setRotateDuration,
     invertRotation, setInvertRotation,
+    canUndo, canRedo, canSave,
+    undoLabel, redoLabel,
+    saveSnapshot, undo, redo,
   } = usePlanet();
 
   const gradient = useMemo(
@@ -99,7 +104,15 @@ function PlanetBuilderInner() {
                      onChange={setBacklightGlow}/>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-4  flex flex-col gap-2">
+          <div className="flex flex-wrap gap-2">
+            <ClickableButton onClick={saveSnapshot} label={"Checkpoint"} icon={SaveIcon} disabled={!canSave}
+                             className={"flex-1"} tooltip={"Save current state to history"}/>
+            <ClickableButton onClick={undo} label={"Undo"} icon={Undo} disabled={!canUndo} className={"flex-1"}
+                             tooltip={undoLabel ? `Undo → ${undoLabel}` : "Nothing to undo"}/>
+            <ClickableButton onClick={redo} label={"Redo"} icon={Redo} disabled={!canRedo} className={"flex-1"}
+                             tooltip={redoLabel ? `Redo → ${redoLabel}` : "Nothing to redo"}/>
+          </div>
           <DownloadButton onClick={downloadPlanetSVG}/>
         </div>
       </div>

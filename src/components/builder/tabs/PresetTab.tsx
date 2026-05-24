@@ -1,54 +1,11 @@
-import { RandomiseButton, SectionHead, StepBack } from "../ui-collection.tsx";
-import { type PlanetSnapshot, usePlanet } from "../PlanetContext.tsx";
-import { useState } from "react";
+import { RandomiseButton, SectionHead } from "../ui-collection.tsx";
+import { usePlanet } from "../usePlanet.ts";
 import { FULL_PRESETS } from "../presets.ts";
-
-const HISTORY_LIMIT = 20;
 
 export function PresetTab() {
   const {
-    applyFullPreset,
-    randomiseColors, randomiseRings, randomiseMoons, randomiseAll,
-    takeSnapshot, restoreSnapshot,
+    applyFullPreset, randomiseRings, randomiseMoons, randomiseAll,
   } = usePlanet();
-
-  const [history, setHistory] = useState<PlanetSnapshot[]>([]);
-
-  function push() {
-    setHistory(prev => [takeSnapshot(), ...prev].slice(0, HISTORY_LIMIT));
-  }
-
-  function handleUndo() {
-    const [top, ...rest] = history;
-    if (!top) return;
-    restoreSnapshot(top);
-    setHistory(rest);
-  }
-
-  function handlePreset(key: string) {
-    push();
-    applyFullPreset(key);
-  }
-
-  function handleRandomiseAll() {
-    push();
-    randomiseAll();
-  }
-
-  function handleRandomiseColors() {
-    push();
-    randomiseColors();
-  }
-
-  function handleRandomiseRings() {
-    push();
-    randomiseRings();
-  }
-
-  function handleRandomiseMoons() {
-    push();
-    randomiseMoons();
-  }
 
   return (
     <div className="space-y-4">
@@ -57,7 +14,7 @@ export function PresetTab() {
         {Object.entries(FULL_PRESETS).map(([key, p]) => (
           <button
             key={key}
-            onClick={() => handlePreset(key)}
+            onClick={() => applyFullPreset(key)}
             className="w-[6em] rounded-xl border border-white/10 bg-white/5 p-2 transition hover:bg-white/10"
           >
             <div
@@ -73,13 +30,10 @@ export function PresetTab() {
 
       <SectionHead>Randomness</SectionHead>
       <div className="flex flex-wrap gap-2">
-        <RandomiseButton onClick={handleRandomiseAll} label="Randomise Everything"/>
-        <RandomiseButton onClick={handleRandomiseRings} label="Randomise Rings"/>
-        <RandomiseButton onClick={handleRandomiseMoons} label="Randomise Moons"/>
-        <RandomiseButton onClick={handleRandomiseColors} label="Randomise Colors"/>
+        <RandomiseButton onClick={randomiseAll} label="Randomise Everything"/>
+        <RandomiseButton onClick={randomiseRings} label="Randomise Rings"/>
+        <RandomiseButton onClick={randomiseMoons} label="Randomise Moons"/>
       </div>
-
-      <StepBack onClick={handleUndo} disabled={history.length === 0}/>
     </div>
   );
 }

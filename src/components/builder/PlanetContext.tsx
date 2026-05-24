@@ -1,10 +1,7 @@
 import {
-  createContext,
   type Dispatch,
   type ReactNode,
   type SetStateAction,
-  useCallback,
-  useContext,
   useMemo,
   useState,
 } from "react";
@@ -12,9 +9,11 @@ import { type AnimationType } from "./tabs/AnimationTab.tsx";
 import { type LayerConfig, type LayerConfigHandlers } from "./tabs/SurfaceTab.tsx";
 import { type MoonConfig, type RingConfig } from "./types.ts";
 import { BAND_SEED, DEFAULT_MOONS, DEFAULT_RINGS, FULL_PRESETS, PRESETS, SOFT_BAND_SEED, } from "./presets.ts";
-import { randHex, randSeed, uid } from "./lib.ts";
+import { randHex, randSeed, snapshotsEqual, uid } from "./lib.ts";
+import { PlanetContext } from "./usePlanet.ts";
 
 export interface PlanetSnapshot {
+  label: string;
   planetSize: number;
   backlightGlow: number;
   customMode: boolean;
@@ -26,11 +25,26 @@ export interface PlanetSnapshot {
   soft: LayerConfig;
   rings: RingConfig[];
   moons: MoonConfig[];
+  animMode: AnimationType;
+  jiggleDuration: number;
+  jiggleAngle: number;
+  rotateDuration: number;
+  invertRotation: boolean;
 }
 
 export interface PlanetState {
   tab: string;
   setTab: (t: string) => void;
+
+  canUndo: boolean;
+  canRedo: boolean;
+  canSave: boolean;
+  historyLength: number;
+  undoLabel: string | null;
+  redoLabel: string | null;
+  saveSnapshot: () => void;
+  undo: () => void;
+  redo: () => void;
 
   planetSize: number;
   setPlanetSize: (v: number) => void;
@@ -53,10 +67,6 @@ export interface PlanetState {
   randomiseMoons: () => void;
   randomiseAll: () => void;
 
-  // history
-  takeSnapshot: () => PlanetSnapshot;
-  restoreSnapshot: (s: PlanetSnapshot) => void;
-
   // surface
   band: LayerConfig;
   soft: LayerConfig;
@@ -72,26 +82,18 @@ export interface PlanetState {
 
   // animation
   animMode: AnimationType;
-  setAnimMode: Dispatch<SetStateAction<AnimationType>>;
+  setAnimMode: (v: AnimationType) => void;
   jiggleDuration: number;
-  setJiggleDuration: Dispatch<SetStateAction<number>>;
+  setJiggleDuration: (v: number) => void;
   jiggleAngle: number;
-  setJiggleAngle: Dispatch<SetStateAction<number>>;
+  setJiggleAngle: (v: number) => void;
   rotateDuration: number;
-  setRotateDuration: Dispatch<SetStateAction<number>>;
+  setRotateDuration: (v: number) => void;
   invertRotation: boolean;
-  setInvertRotation: Dispatch<SetStateAction<boolean>>;
+  setInvertRotation: (v: boolean) => void;
 
   // derived
   colors: [string, string, string];
-}
-
-const PlanetContext = createContext<PlanetState | null>(null);
-
-export function usePlanet(): PlanetState {
-  const ctx = useContext(PlanetContext);
-  if (!ctx) throw new Error("usePlanet must be used inside <PlanetProvider>");
-  return ctx;
 }
 
 // ─── Provider ────────────────────────────────────────────────────────────────
@@ -117,155 +119,47 @@ export function PlanetProvider({ children }: { children: ReactNode }) {
   const [moons, setMoons] = useState<MoonConfig[]>(DEFAULT_MOONS);
 
   // animation
-  const [animMode, setAnimMode] = useState<AnimationType>("jiggle");
-  const [jiggleDuration, setJiggleDuration] = useState(25);
-  const [jiggleAngle, setJiggleAngle] = useState(15);
-  const [rotateDuration, setRotateDuration] = useState(40);
-  const [invertRotation, setInvertRotation] = useState(false);
+  const [animMode, setAnimModeRaw] = useState<AnimationType>("jiggle");
+  const [jiggleDuration, setJiggleDurationRaw] = useState(25);
+  const [jiggleAngle, setJiggleAngleRaw] = useState(15);
+  const [rotateDuration, setRotateDurationRaw] = useState(40);
+  const [invertRotation, setInvertRotationRaw] = useState(false);
+
+  // ─── History: cursor-based model ────────────────────────────────────────────
+  // history[cursor] is always the last *saved* (anchored) snapshot.
+  // Unsaved edits live only in the live state variables above; they are not
+  // in the history array until the user hits Checkpoint (or an action that
+  // auto-saves, like applying a preset).
+  const [history, setHistory] = useState<PlanetSnapshot[]>(() => [{
+    label: "Initial",
+    planetSize: 28,
+    backlightGlow: 15,
+    customMode: false,
+    paletteKey: "nebula",
+    highlight: PRESETS["nebula"].colors[0],
+    mid: PRESETS["nebula"].colors[1],
+    shadow: PRESETS["nebula"].colors[2],
+    band: { seed: BAND_SEED, count: 12, opacity: 100, angle: 5 },
+    soft: { seed: SOFT_BAND_SEED, count: 4, opacity: 55, angle: 15 },
+    rings: DEFAULT_RINGS.map(r => ({ ...r })),
+    moons: DEFAULT_MOONS.map(m => ({ ...m })),
+    animMode: "jiggle",
+    jiggleDuration: 25,
+    jiggleAngle: 15,
+    rotateDuration: 40,
+    invertRotation: false,
+  }]);
+  const [cursor, setCursor] = useState(0);
+  const [isAnchored, setIsAnchored] = useState(true);
+  const [checkpointCounter, setCheckpointCounter] = useState(0);
 
   const minOrbit = planetSize + 4;
 
-  // ─── Setters that enforce constraints ───────────────────────────────────────
+  // ─── Snapshot helpers ────────────────────────────────────────────────────────
 
-  function setPlanetSize(size: number) {
-    const newMin = size + 4;
-    setPlanetSizeRaw(size);
-    setRings(prev => prev.map(r => ({ ...r, rx: Math.max(r.rx, newMin + r.strokeWidth * 2) })));
-    setMoons(prev => prev.map(m => ({ ...m, orbitRx: Math.max(m.orbitRx, newMin + m.radius) })));
-  }
-
-  function setHighlight(v: string) {
-    setCustomMode(true);
-    setHighlightRaw(v);
-  }
-
-  function setMid(v: string) {
-    setCustomMode(true);
-    setMidRaw(v);
-  }
-
-  function setShadow(v: string) {
-    setCustomMode(true);
-    setShadowRaw(v);
-  }
-
-  function handleRingsChange(next: RingConfig[]) {
-    setRings(next.map(r => ({ ...r, rx: Math.max(r.rx, minOrbit + r.strokeWidth * 2) })));
-  }
-
-  function handleMoonsChange(next: MoonConfig[]) {
-    setMoons(next.map(m => ({ ...m, orbitRx: Math.max(m.orbitRx, minOrbit + m.radius) })));
-  }
-
-  // ─── Preset application ──────────────────────────────────────────────────────
-
-  function applyPreset(key: string) {
-    setPaletteKey(key);
-    setCustomMode(false);
-    const p = PRESETS[key].colors;
-    setHighlightRaw(p[0]);
-    setMidRaw(p[1]);
-    setShadowRaw(p[2]);
-  }
-
-  function applyFullPreset(key: string) {
-    const p = FULL_PRESETS[key];
-    if (!p) return;
-    setPlanetSizeRaw(p.planetSize);
-    setBacklightGlow(p.backlightGlow);
-    setHighlightRaw(p.colors[0]);
-    setMidRaw(p.colors[1]);
-    setShadowRaw(p.colors[2]);
-    setCustomMode(false);
-    setPaletteKey(key);
-    setBand({ ...p.band });
-    setSoft({ ...p.soft });
-    // Re-stamp UIDs so React keys are fresh
-    setRings(p.rings.map(r => ({ ...r, uid: uid() })));
-    setMoons(p.moons.map(m => ({ ...m, id: uid() })));
-  }
-
-  // ─── Randomise helpers ───────────────────────────────────────────────────────
-
-  const randomiseColors = useCallback(() => {
-    setHighlightRaw(randHex());
-    setMidRaw(randHex());
-    setShadowRaw(randHex());
-    setCustomMode(true);
-  }, []);
-
-  const randomiseRings = useCallback(() => {
-    const count = Math.floor(Math.random() * 4); // 0-3 rings
-    const newRings: RingConfig[] = Array.from({ length: count }, () => {
-      const sw = parseFloat((0.5 + Math.random() * 1.5).toFixed(1));
-      const rxMin = Math.max(45, minOrbit + sw * 2);
-      return {
-        uid: uid(),
-        rx: rxMin + Math.random() * (90 - rxMin),
-        ry: 6 + Math.random() * 19,
-        stroke: randHex(),
-        strokeWidth: sw,
-        strokeOpacity: 0.2 + Math.random() * 0.8,
-        angle: Math.random() * 180,
-      };
-    });
-    setRings(newRings);
-  }, [minOrbit]);
-
-  const randomiseMoons = useCallback(() => {
-    const count = Math.floor(Math.random() * 4); // 0-3 moons
-    const newMoons: MoonConfig[] = Array.from({ length: count }, () => {
-      const radius = 0.5 + Math.random() * 9.5;
-      const orbitRxMin = minOrbit + radius;
-      return {
-        id: uid(),
-        orbitRx: orbitRxMin + Math.random() * (90 - orbitRxMin),
-        orbitRy: 10 + Math.random() * 25,
-        orbitTilt: -15 + Math.random() * 30,
-        radius,
-        durationS: 2 + Math.random() * 58,
-        begin: -30 + Math.random() * 30,
-        color: randHex(),
-      };
-    });
-    setMoons(newMoons);
-  }, [minOrbit]);
-
-  const randomiseAll = useCallback(() => {
-    randomiseColors();
-    randomiseRings();
-    randomiseMoons();
-    setBand({
-      seed: randSeed(),
-      count: Math.ceil(Math.random() * 20),
-      opacity: 40 + Math.random() * 60,
-      angle: -20 + Math.random() * 40
-    });
-    setSoft({
-      seed: randSeed(),
-      count: 1 + Math.ceil(Math.random() * 8),
-      opacity: 30 + Math.random() * 60,
-      angle: -30 + Math.random() * 60
-    });
-    setPlanetSizeRaw(16 + Math.floor(Math.random() * 24));
-    setBacklightGlow(Math.floor(Math.random() * 25));
-  }, [randomiseColors, randomiseRings, randomiseMoons]);
-
-  // ─── Layer handlers ──────────────────────────────────────────────────────────
-
-  function makeLayerHandlers(setter: Dispatch<SetStateAction<LayerConfig>>): LayerConfigHandlers {
+  function takeSnapshot(label = ""): PlanetSnapshot {
     return {
-      onSeedChange: (v) => setter(p => ({ ...p, seed: v })),
-      onCountChange: (v) => setter(p => ({ ...p, count: v })),
-      onOpacityChange: (v) => setter(p => ({ ...p, opacity: v })),
-      onAngleChange: (v) => setter(p => ({ ...p, angle: v })),
-    };
-  }
-
-  // ─── Snapshot ────────────────────────────────────────────────────────────────
-
-  function takeSnapshot(): PlanetSnapshot {
-    return {
+      label,
       planetSize,
       backlightGlow,
       customMode,
@@ -277,6 +171,11 @@ export function PlanetProvider({ children }: { children: ReactNode }) {
       soft: { ...soft },
       rings: rings.map(r => ({ ...r })),
       moons: moons.map(m => ({ ...m })),
+      animMode,
+      jiggleDuration,
+      jiggleAngle,
+      rotateDuration,
+      invertRotation,
     };
   }
 
@@ -292,6 +191,260 @@ export function PlanetProvider({ children }: { children: ReactNode }) {
     setSoft({ ...s.soft });
     setRings(s.rings.map(r => ({ ...r })));
     setMoons(s.moons.map(m => ({ ...m })));
+    setAnimModeRaw(s.animMode);
+    setJiggleDurationRaw(s.jiggleDuration);
+    setJiggleAngleRaw(s.jiggleAngle);
+    setRotateDurationRaw(s.rotateDuration);
+    setInvertRotationRaw(s.invertRotation);
+  }
+
+  // History is newest-first: history[0] is the most recent checkpoint,
+  // history[history.length-1] is the oldest.
+  // cursor points to the "current" position; entries before cursor (lower index)
+  // are redo candidates, entries after (higher index) are undo candidates.
+
+  // Push the new snapshot, restore it, anchor. Any unsaved WIP in live state
+  // is discarded — only Checkpoint and explicit actions (preset/randomise)
+  // ever write to history.
+  function commit(label: string, mutate: (curr: PlanetSnapshot) => PlanetSnapshot) {
+    const newSnap = mutate(takeSnapshot(label));
+    const currentCursor = cursor;
+    setHistory(prev => {
+      const trunk = prev.slice(currentCursor);
+      if (snapshotsEqual(newSnap, trunk[0])) return prev;
+      return [newSnap, ...trunk];
+    });
+    setCursor(0);
+    setIsAnchored(true);
+    restoreSnapshot(newSnap);
+  }
+
+  function saveSnapshot() {
+    const n = checkpointCounter + 1;
+    setCheckpointCounter(n);
+    const snap = takeSnapshot(`Checkpoint ${n}`);
+    const currentCursor = cursor;
+    setHistory(prev => {
+      const trunk = prev.slice(currentCursor);
+      if (snapshotsEqual(snap, trunk[0])) return prev;
+      return [snap, ...trunk];
+    });
+    setCursor(0);
+    setIsAnchored(true);
+  }
+
+  function undo() {
+    // From a dirty state, first undo discards WIP and snaps back to the
+    // current anchor — it does not consume a history step.
+    if (!isAnchored) {
+      restoreSnapshot(history[cursor]);
+      setIsAnchored(true);
+      return;
+    }
+
+    const nextCursor = cursor + 1;
+    if (nextCursor >= history.length) return;
+    restoreSnapshot(history[nextCursor]);
+    setCursor(nextCursor);
+    setIsAnchored(true);
+  }
+
+  function redo() {
+    if (cursor === 0) return;
+    const nextCursor = cursor - 1;
+    restoreSnapshot(history[nextCursor]);
+    setCursor(nextCursor);
+    setIsAnchored(true);
+  }
+
+  // First dirty edit while sitting in the past truncates the redo branch
+  // (Photoshop-style): the "future" stops being reachable, since live state
+  // has diverged from it. Idempotent across multiple calls in one event.
+  function markDirty() {
+    if (cursor > 0) {
+      const anchor = history[cursor];
+      setHistory(prev => prev[0] === anchor ? prev : prev.slice(cursor));
+      setCursor(0);
+    }
+    setIsAnchored(false);
+  }
+
+  // ─── Setters that enforce constraints ───────────────────────────────────────
+
+  function setPlanetSize(size: number) {
+    const newMin = size + 4;
+    setPlanetSizeRaw(size);
+    setRings(prev => prev.map(r => ({ ...r, rx: Math.max(r.rx, newMin + r.strokeWidth * 2) })));
+    setMoons(prev => prev.map(m => ({ ...m, orbitRx: Math.max(m.orbitRx, newMin + m.radius) })));
+    markDirty();
+  }
+
+  function setHighlight(v: string) {
+    setCustomMode(true);
+    setHighlightRaw(v);
+    markDirty();
+  }
+
+  function setMid(v: string) {
+    setCustomMode(true);
+    setMidRaw(v);
+    markDirty();
+  }
+
+  function setShadow(v: string) {
+    setCustomMode(true);
+    setShadowRaw(v);
+    markDirty();
+  }
+
+  function setBacklightGlowDirty(v: number) {
+    setBacklightGlow(v);
+    markDirty();
+  }
+
+  function handleRingsChange(next: RingConfig[]) {
+    setRings(next.map(r => ({ ...r, rx: Math.max(r.rx, minOrbit + r.strokeWidth * 2) })));
+    markDirty();
+  }
+
+  function handleMoonsChange(next: MoonConfig[]) {
+    setMoons(next.map(m => ({ ...m, orbitRx: Math.max(m.orbitRx, minOrbit + m.radius) })));
+    markDirty();
+  }
+
+  function setAnimMode(v: AnimationType) { setAnimModeRaw(v); markDirty(); }
+  function setJiggleDuration(v: number) { setJiggleDurationRaw(v); markDirty(); }
+  function setJiggleAngle(v: number) { setJiggleAngleRaw(v); markDirty(); }
+  function setRotateDuration(v: number) { setRotateDurationRaw(v); markDirty(); }
+  function setInvertRotation(v: boolean) { setInvertRotationRaw(v); markDirty(); }
+
+  // ─── Preset application ──────────────────────────────────────────────────────
+
+  function applyPreset(key: string) {
+    const p = PRESETS[key];
+    commit(`${p.label} palette`, curr => ({
+      ...curr,
+      paletteKey: key,
+      customMode: false,
+      highlight: p.colors[0],
+      mid: p.colors[1],
+      shadow: p.colors[2],
+    }));
+  }
+
+  function applyFullPreset(key: string) {
+    const p = FULL_PRESETS[key];
+    if (!p) return;
+    commit(`${p.label} preset`, curr => ({
+      ...curr,
+      planetSize: p.planetSize,
+      backlightGlow: p.backlightGlow,
+      paletteKey: key,
+      customMode: false,
+      highlight: p.colors[0],
+      mid: p.colors[1],
+      shadow: p.colors[2],
+      band: { ...p.band },
+      soft: { ...p.soft },
+      rings: p.rings.map(r => ({ ...r, uid: uid() })),
+      moons: p.moons.map(m => ({ ...m, id: uid() })),
+    }));
+  }
+
+  // ─── Randomise helpers ───────────────────────────────────────────────────────
+
+  function makeRandomColors() {
+    return { highlight: randHex(), mid: randHex(), shadow: randHex() };
+  }
+
+  function makeRandomRings(minRx: number): RingConfig[] {
+    const count = Math.floor(Math.random() * 4);
+    return Array.from({ length: count }, () => {
+      const sw = parseFloat((0.5 + Math.random() * 1.5).toFixed(1));
+      const rxMin = Math.max(45, minRx + sw * 2);
+      return {
+        uid: uid(),
+        rx: rxMin + Math.random() * (90 - rxMin),
+        ry: 6 + Math.random() * 19,
+        stroke: randHex(),
+        strokeWidth: sw,
+        strokeOpacity: 0.2 + Math.random() * 0.8,
+        angle: Math.random() * 180,
+      };
+    });
+  }
+
+  function makeRandomMoons(minRx: number): MoonConfig[] {
+    const count = Math.floor(Math.random() * 4);
+    return Array.from({ length: count }, () => {
+      const radius = 0.5 + Math.random() * 9.5;
+      const orbitRxMin = minRx + radius;
+      return {
+        id: uid(),
+        orbitRx: orbitRxMin + Math.random() * (90 - orbitRxMin),
+        orbitRy: 10 + Math.random() * 25,
+        orbitTilt: -15 + Math.random() * 30,
+        radius,
+        durationS: 2 + Math.random() * 58,
+        begin: -30 + Math.random() * 30,
+        color: randHex(),
+      };
+    });
+  }
+
+  function randomiseColors() {
+    const { highlight: h, mid: m, shadow: s } = makeRandomColors();
+    setHighlightRaw(h);
+    setMidRaw(m);
+    setShadowRaw(s);
+    setCustomMode(true);
+    markDirty();
+  }
+
+  function randomiseRings() {
+    commit("Randomise Rings", curr => ({ ...curr, rings: makeRandomRings(curr.planetSize + 4) }));
+  }
+
+  function randomiseMoons() {
+    commit("Randomise Moons", curr => ({ ...curr, moons: makeRandomMoons(curr.planetSize + 4) }));
+  }
+
+  function randomiseAll() {
+    commit("Randomise All", curr => {
+      const oldMin = curr.planetSize + 4;
+      return {
+        ...curr,
+        ...makeRandomColors(),
+        customMode: true,
+        rings: makeRandomRings(oldMin),
+        moons: makeRandomMoons(oldMin),
+        band: {
+          seed: randSeed(),
+          count: Math.ceil(Math.random() * 20),
+          opacity: 40 + Math.random() * 60,
+          angle: -20 + Math.random() * 40,
+        },
+        soft: {
+          seed: randSeed(),
+          count: 1 + Math.ceil(Math.random() * 8),
+          opacity: 30 + Math.random() * 60,
+          angle: -30 + Math.random() * 60,
+        },
+        planetSize: 16 + Math.floor(Math.random() * 24),
+        backlightGlow: Math.floor(Math.random() * 25),
+      };
+    });
+  }
+
+  // ─── Layer handlers ──────────────────────────────────────────────────────────
+
+  function makeLayerHandlers(setter: Dispatch<SetStateAction<LayerConfig>>): LayerConfigHandlers {
+    return {
+      onSeedChange: (v) => { setter(p => ({ ...p, seed: v })); markDirty(); },
+      onCountChange: (v) => { setter(p => ({ ...p, count: v })); markDirty(); },
+      onOpacityChange: (v) => { setter(p => ({ ...p, opacity: v })); markDirty(); },
+      onAngleChange: (v) => { setter(p => ({ ...p, angle: v })); markDirty(); },
+    };
   }
 
   // ─── Derived ─────────────────────────────────────────────────────────────────
@@ -304,13 +457,19 @@ export function PlanetProvider({ children }: { children: ReactNode }) {
   const value: PlanetState = {
     tab, setTab,
     planetSize, setPlanetSize,
-    backlightGlow, setBacklightGlow,
+    backlightGlow, setBacklightGlow: setBacklightGlowDirty,
     customMode, paletteKey,
     highlight, mid, shadow,
     setHighlight, setMid, setShadow,
     applyPreset, applyFullPreset,
     randomiseColors, randomiseRings, randomiseMoons, randomiseAll,
-    takeSnapshot, restoreSnapshot,
+    canUndo: cursor < history.length - 1 || !isAnchored,
+    canRedo: cursor > 0,
+    canSave: !isAnchored,
+    historyLength: history.length,
+    undoLabel: !isAnchored ? history[cursor]?.label ?? null : (history[cursor + 1]?.label ?? null),
+    redoLabel: cursor > 0 ? history[cursor - 1]?.label ?? null : null,
+    saveSnapshot, undo, redo,
     band, soft,
     bandHandlers: makeLayerHandlers(setBand),
     softHandlers: makeLayerHandlers(setSoft),

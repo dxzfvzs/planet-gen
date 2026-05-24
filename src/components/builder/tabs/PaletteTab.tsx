@@ -1,15 +1,6 @@
-import { useState } from "react";
-import { ColorInput, RandomiseButton, SectionHead, StepBack } from "../ui-collection.tsx";
+import { ColorInput, RandomiseButton, SectionHead } from "../ui-collection.tsx";
 import { PRESETS } from "../presets.ts";
-import { usePlanet } from "../PlanetContext.tsx";
-
-interface PaletteState {
-  highlight: string;
-  mid: string;
-  shadow: string;
-}
-
-const HISTORY_LIMIT = 5;
+import { usePlanet } from "../usePlanet.ts";
 
 export function PaletteTab() {
   const {
@@ -18,46 +9,6 @@ export function PaletteTab() {
     applyPreset, randomiseColors,
   } = usePlanet();
 
-  const [history, setHistory] = useState<PaletteState[]>([]);
-
-  function pushHistory() {
-    setHistory(prev => [{ highlight, mid, shadow }, ...prev].slice(0, HISTORY_LIMIT));
-  }
-
-  function handleUndo() {
-    const previous = history[0];
-    if (!previous) return;
-    setHighlight(previous.highlight);
-    setMid(previous.mid);
-    setShadow(previous.shadow);
-    setHistory(prev => prev.slice(1));
-  }
-
-  function handleHighlightChange(v: string) {
-    pushHistory();
-    setHighlight(v);
-  }
-
-  function handleMidChange(v: string) {
-    pushHistory();
-    setMid(v);
-  }
-
-  function handleShadowChange(v: string) {
-    pushHistory();
-    setShadow(v);
-  }
-
-  function handlePreset(key: string) {
-    pushHistory();
-    applyPreset(key);
-  }
-
-  function handleRandomise() {
-    pushHistory();
-    randomiseColors();
-  }
-
   return (
     <div className="space-y-4">
       <SectionHead>Color Presets</SectionHead>
@@ -65,7 +16,7 @@ export function PaletteTab() {
         {Object.entries(PRESETS).map(([key, p]) => (
           <button
             key={key}
-            onClick={() => handlePreset(key)}
+            onClick={() => applyPreset(key)}
             className="w-[6em] rounded-xl border border-white/10 bg-white/5 p-2 transition hover:bg-white/10"
           >
             <div
@@ -81,15 +32,12 @@ export function PaletteTab() {
 
       <SectionHead>Custom Colors</SectionHead>
       <div className="space-y-2">
-        <ColorInput label="Highlight" value={highlight} onChange={handleHighlightChange}/>
-        <ColorInput label="Mid" value={mid} onChange={handleMidChange}/>
-        <ColorInput label="Shadow" value={shadow} onChange={handleShadowChange}/>
+        <ColorInput label="Highlight" value={highlight} onChange={setHighlight}/>
+        <ColorInput label="Mid" value={mid} onChange={setMid}/>
+        <ColorInput label="Shadow" value={shadow} onChange={setShadow}/>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        <RandomiseButton onClick={handleRandomise} label="Randomise Colors"/>
-        <StepBack onClick={handleUndo} disabled={history.length === 0}/>
-      </div>
+      <RandomiseButton onClick={randomiseColors} label="Randomise Colors"/>
     </div>
   );
 }

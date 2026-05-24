@@ -1,6 +1,6 @@
 import { Label, SectionHead, SliderRow, TextInputWithShuffle } from "../ui-collection.tsx";
 import { randSeed } from "../lib.ts";
-import { usePlanet } from "../PlanetContext.tsx";
+import { usePlanet } from "../usePlanet.ts";
 
 export interface LayerConfig {
   seed: string;
