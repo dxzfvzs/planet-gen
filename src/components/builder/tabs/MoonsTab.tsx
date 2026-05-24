@@ -2,14 +2,11 @@ import { type MoonConfig } from "../types.ts";
 import { ColorInput, SliderRow } from "../ui-collection.tsx";
 import { AddCard, ConfigCard } from "../ConfigCard.tsx";
 import { randHex, uid } from "../lib.ts";
+import { usePlanet } from "../PlanetContext.tsx";
 
-interface MoonsTabProps {
-  moons: MoonConfig[];
-  onChange: (moons: MoonConfig[]) => void;
-  minOrbit: number;
-}
+export function MoonsTab() {
+  const { moons, handleMoonsChange, minOrbit } = usePlanet();
 
-export function MoonsTab({ moons, onChange, minOrbit }: MoonsTabProps) {
   function randStep(min: number, max: number, step: number = 1) {
     const steps = Math.floor((max - min) / step);
     return min + Math.round(Math.random() * steps) * step;
@@ -19,8 +16,7 @@ export function MoonsTab({ moons, onChange, minOrbit }: MoonsTabProps) {
     const radius = randStep(0.5, 10, 0.5);
     const orbitRxMin = minOrbit + radius;
     const orbitRx = randStep(orbitRxMin, 90);
-
-    onChange([...moons, {
+    handleMoonsChange([...moons, {
       id: uid(),
       orbitRx,
       orbitRy: randStep(10, 35),
@@ -33,11 +29,11 @@ export function MoonsTab({ moons, onChange, minOrbit }: MoonsTabProps) {
   }
 
   function remove(id: string) {
-    onChange(moons.filter((m) => m.id !== id));
+    handleMoonsChange(moons.filter(m => m.id !== id));
   }
 
   function updateMoon<K extends keyof MoonConfig>(id: string, key: K, val: MoonConfig[K]) {
-    onChange(moons.map((m) => m.id === id ? { ...m, [key]: val } : m));
+    handleMoonsChange(moons.map(m => m.id === id ? { ...m, [key]: val } : m));
   }
 
   return (
