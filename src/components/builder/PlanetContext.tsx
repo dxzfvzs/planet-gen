@@ -383,7 +383,8 @@ export function PlanetProvider({ children }: { children: ReactNode }) {
   }
 
   function makeRandomRings(minRx: number): RingConfig[] {
-    const count = randNum(0, 5);
+    const minRings = rings.length === 0 ? 1 : 0;
+    const count = randNum(minRings, 5);
     return Array.from({ length: count }, () => {
       const sw = randNum(0.5, 2, 0.5);
       const rxMin = Math.max(45, minRx + sw * 2);
@@ -400,7 +401,8 @@ export function PlanetProvider({ children }: { children: ReactNode }) {
   }
 
   function makeRandomMoons(minRx: number): MoonConfig[] {
-    const count = randNum(0, 3);
+    const minMoons = moons.length === 0 ? 1 : 0;
+    const count = randNum(minMoons, 3);
     return Array.from({ length: count }, () => {
       const radius = randNum(0.5, 10, 0.5);
       const orbitRxMin = minRx + radius;
