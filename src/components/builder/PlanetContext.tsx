@@ -237,10 +237,17 @@ export function PlanetProvider({ children }: { children: ReactNode }) {
   }
 
   function undo() {
-    // From a dirty state, first undo discards WIP and snaps back to the
-    // current anchor — it does not consume a history step.
     if (!isAnchored) {
-      restoreSnapshot(history[cursor]);
+      const snap = takeSnapshot("Unsaved edits");
+      const anchor = history[cursor];
+      if (!snapshotsEqual(snap, anchor)) {
+        setHistory(prev => [snap, ...prev]);
+        setCursor(1);
+        restoreSnapshot(anchor);
+        setIsAnchored(true);
+        return;
+      }
+      restoreSnapshot(anchor);
       setIsAnchored(true);
       return;
     }
