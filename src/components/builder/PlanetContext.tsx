@@ -382,8 +382,9 @@ export function PlanetProvider({ children }: { children: ReactNode }) {
     return { highlight: randHex(), mid: randHex(), shadow: randHex() };
   }
 
-  function makeRandomRings(minRx: number): RingConfig[] {
-    const minRings = rings.length === 0 ? 1 : 0;
+  // ignorePrevState is called as true from randomiseAll, so that previous 0 rings can result in 0 rings as well
+  function makeRandomRings(minRx: number, ignorePrevState = false): RingConfig[] {
+    const minRings = !ignorePrevState && rings.length === 0 ? 1 : 0;
     const count = randNum(minRings, 5);
     return Array.from({ length: count }, () => {
       const sw = randNum(0.5, 2, 0.5);
@@ -400,8 +401,8 @@ export function PlanetProvider({ children }: { children: ReactNode }) {
     });
   }
 
-  function makeRandomMoons(minRx: number): MoonConfig[] {
-    const minMoons = moons.length === 0 ? 1 : 0;
+  function makeRandomMoons(minRx: number, ignorePrevState = false): MoonConfig[] {
+    const minMoons = !ignorePrevState && moons.length === 0 ? 1 : 0;
     const count = randNum(minMoons, 3);
     return Array.from({ length: count }, () => {
       const radius = randNum(0.5, 10, 0.5);
@@ -439,15 +440,15 @@ export function PlanetProvider({ children }: { children: ReactNode }) {
   function randomiseAll() {
     commit("Randomise All", curr => {
       const planetSize = randNum(16, 40);
-      const newMin = planetSize + 4;
+      const newMinOrbit = planetSize + 4;
 
       return {
         ...curr,
         ...makeRandomColors(),
         customMode: true,
         planetSize: planetSize,
-        rings: makeRandomRings(newMin),
-        moons: makeRandomMoons(newMin),
+        rings: makeRandomRings(newMinOrbit, true),
+        moons: makeRandomMoons(newMinOrbit, true),
         band: {
           seed: randSeed(),
           count: randNum(10, 30),
