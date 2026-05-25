@@ -14,7 +14,7 @@ export function RingsTab() {
 
   function add() {
     const sw = randStep(0.5, 2, 0.5);
-    const rxMin = Math.max(45, minOrbit + sw / 2);
+    const rxMin = Math.max(45, minOrbit + sw * 2);
     handleRingsChange([...rings, {
       uid: uid(),
       rx: randStep(rxMin, 90),
