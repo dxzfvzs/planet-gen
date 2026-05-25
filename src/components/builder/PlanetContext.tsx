@@ -8,7 +8,7 @@ import {
 import { type AnimationType } from "./tabs/AnimationTab.tsx";
 import { type LayerConfig, type LayerConfigHandlers } from "./tabs/SurfaceTab.tsx";
 import { type MoonConfig, type RingConfig } from "./types.ts";
-import { BAND_SEED, DEFAULT_MOONS, DEFAULT_RINGS, FULL_PRESETS, PRESETS, SOFT_BAND_SEED, } from "./presets.ts";
+import { DEFAULT_MOONS, DEFAULT_RINGS, FULL_PRESETS, PRESETS } from "./presets.ts";
 import { randHex, randSeed, snapshotsEqual, uid } from "./lib.ts";
 import { PlanetContext } from "./usePlanet.ts";
 
@@ -100,19 +100,19 @@ export interface PlanetState {
 
 export function PlanetProvider({ children }: { children: ReactNode }) {
   const [tab, setTab] = useState("preset");
-  const [planetSize, setPlanetSizeRaw] = useState(28);
-  const [backlightGlow, setBacklightGlow] = useState(15);
+  const [planetSize, setPlanetSizeRaw] = useState(FULL_PRESETS["nebula"].planetSize);
+  const [backlightGlow, setBacklightGlow] = useState(FULL_PRESETS["nebula"].backlightGlow);
 
   // palette
   const [customMode, setCustomMode] = useState(false);
   const [paletteKey, setPaletteKey] = useState("nebula");
-  const [highlight, setHighlightRaw] = useState(PRESETS["nebula"].colors[0]);
-  const [mid, setMidRaw] = useState(PRESETS["nebula"].colors[1]);
-  const [shadow, setShadowRaw] = useState(PRESETS["nebula"].colors[2]);
+  const [highlight, setHighlightRaw] = useState(FULL_PRESETS["nebula"].colors[0]);
+  const [mid, setMidRaw] = useState(FULL_PRESETS["nebula"].colors[1]);
+  const [shadow, setShadowRaw] = useState(FULL_PRESETS["nebula"].colors[2]);
 
   // surface
-  const [band, setBand] = useState<LayerConfig>({ seed: BAND_SEED, count: 12, opacity: 100, angle: 5 });
-  const [soft, setSoft] = useState<LayerConfig>({ seed: SOFT_BAND_SEED, count: 4, opacity: 55, angle: 15 });
+  const [band, setBand] = useState<LayerConfig>({ ...FULL_PRESETS["nebula"].band });
+  const [soft, setSoft] = useState<LayerConfig>({ ...FULL_PRESETS["nebula"].soft });
 
   // rings & moons
   const [rings, setRings] = useState<RingConfig[]>(DEFAULT_RINGS);
@@ -130,25 +130,28 @@ export function PlanetProvider({ children }: { children: ReactNode }) {
   // Unsaved edits live only in the live state variables above; they are not
   // in the history array until the user hits Checkpoint (or an action that
   // auto-saves, like applying a preset).
-  const [history, setHistory] = useState<PlanetSnapshot[]>(() => [{
-    label: "Initial",
-    planetSize: 28,
-    backlightGlow: 15,
-    customMode: false,
-    paletteKey: "nebula",
-    highlight: PRESETS["nebula"].colors[0],
-    mid: PRESETS["nebula"].colors[1],
-    shadow: PRESETS["nebula"].colors[2],
-    band: { seed: BAND_SEED, count: 12, opacity: 100, angle: 5 },
-    soft: { seed: SOFT_BAND_SEED, count: 4, opacity: 55, angle: 15 },
-    rings: DEFAULT_RINGS.map(r => ({ ...r })),
-    moons: DEFAULT_MOONS.map(m => ({ ...m })),
-    animMode: "jiggle",
-    jiggleDuration: 25,
-    jiggleAngle: 15,
-    rotateDuration: 40,
-    invertRotation: false,
-  }]);
+  const [history, setHistory] = useState<PlanetSnapshot[]>(() => {
+    return [{
+      label: "Nebula preset",
+      planetSize,
+      backlightGlow,
+      customMode,
+      paletteKey,
+      highlight,
+      mid,
+      shadow,
+      band: { ...band },
+      soft: { ...soft },
+      rings: rings.map(r => ({ ...r })),
+      moons: moons.map(m => ({ ...m })),
+      animMode,
+      jiggleDuration,
+      jiggleAngle,
+      rotateDuration,
+      invertRotation,
+    }];
+  });
+
   const [cursor, setCursor] = useState(0);
   const [isAnchored, setIsAnchored] = useState(true);
   const [checkpointCounter, setCheckpointCounter] = useState(0);
