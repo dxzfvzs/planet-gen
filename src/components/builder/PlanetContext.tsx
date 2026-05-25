@@ -1,15 +1,9 @@
-import {
-  type Dispatch,
-  type ReactNode,
-  type SetStateAction,
-  useMemo,
-  useState,
-} from "react";
+import { type Dispatch, type ReactNode, type SetStateAction, useMemo, useState, } from "react";
 import { type AnimationType } from "./tabs/AnimationTab.tsx";
 import { type LayerConfig, type LayerConfigHandlers } from "./tabs/SurfaceTab.tsx";
 import { type MoonConfig, type RingConfig } from "./types.ts";
 import { DEFAULT_MOONS, DEFAULT_RINGS, FULL_PRESETS, PRESETS } from "./presets.ts";
-import { randHex, randSeed, snapshotsEqual, uid } from "./lib.ts";
+import { randHex, randNum, randSeed, snapshotsEqual, uid } from "./lib.ts";
 import { PlanetContext } from "./usePlanet.ts";
 
 export interface PlanetSnapshot {
@@ -324,11 +318,30 @@ export function PlanetProvider({ children }: { children: ReactNode }) {
     markDirty();
   }
 
-  function setAnimMode(v: AnimationType) { setAnimModeRaw(v); markDirty(); }
-  function setJiggleDuration(v: number) { setJiggleDurationRaw(v); markDirty(); }
-  function setJiggleAngle(v: number) { setJiggleAngleRaw(v); markDirty(); }
-  function setRotateDuration(v: number) { setRotateDurationRaw(v); markDirty(); }
-  function setInvertRotation(v: boolean) { setInvertRotationRaw(v); markDirty(); }
+  function setAnimMode(v: AnimationType) {
+    setAnimModeRaw(v);
+    markDirty();
+  }
+
+  function setJiggleDuration(v: number) {
+    setJiggleDurationRaw(v);
+    markDirty();
+  }
+
+  function setJiggleAngle(v: number) {
+    setJiggleAngleRaw(v);
+    markDirty();
+  }
+
+  function setRotateDuration(v: number) {
+    setRotateDurationRaw(v);
+    markDirty();
+  }
+
+  function setInvertRotation(v: boolean) {
+    setInvertRotationRaw(v);
+    markDirty();
+  }
 
   // ─── Preset application ──────────────────────────────────────────────────────
 
@@ -370,35 +383,35 @@ export function PlanetProvider({ children }: { children: ReactNode }) {
   }
 
   function makeRandomRings(minRx: number): RingConfig[] {
-    const count = Math.floor(Math.random() * 4);
+    const count = randNum(0, 5);
     return Array.from({ length: count }, () => {
-      const sw = parseFloat((0.5 + Math.random() * 1.5).toFixed(1));
+      const sw = randNum(0.5, 2, 0.5);
       const rxMin = Math.max(45, minRx + sw * 2);
       return {
         uid: uid(),
-        rx: rxMin + Math.random() * (90 - rxMin),
-        ry: 6 + Math.random() * 19,
+        rx: randNum(rxMin, 90),
+        ry: randNum(6, 25),
         stroke: randHex(),
         strokeWidth: sw,
-        strokeOpacity: 0.2 + Math.random() * 0.8,
-        angle: Math.random() * 180,
+        strokeOpacity: randNum(0.2, 1, 0.01),
+        angle: randNum(0, 180),
       };
     });
   }
 
   function makeRandomMoons(minRx: number): MoonConfig[] {
-    const count = Math.floor(Math.random() * 4);
+    const count = randNum(0, 3);
     return Array.from({ length: count }, () => {
-      const radius = 0.5 + Math.random() * 9.5;
+      const radius = randNum(0.5, 10, 0.5);
       const orbitRxMin = minRx + radius;
       return {
         id: uid(),
-        orbitRx: orbitRxMin + Math.random() * (90 - orbitRxMin),
-        orbitRy: 10 + Math.random() * 25,
-        orbitTilt: -15 + Math.random() * 30,
+        orbitRx: randNum(orbitRxMin, 90, 0.5),
+        orbitRy: randNum(10, 35, 0.5),
+        orbitTilt: randNum(-5, 5),
         radius,
-        durationS: 2 + Math.random() * 58,
-        begin: -30 + Math.random() * 30,
+        durationS: randNum(2, 60),
+        begin: randNum(-30, 0),
         color: randHex(),
       };
     });
@@ -423,27 +436,29 @@ export function PlanetProvider({ children }: { children: ReactNode }) {
 
   function randomiseAll() {
     commit("Randomise All", curr => {
-      const oldMin = curr.planetSize + 4;
+      const planetSize = randNum(16, 40);
+      const newMin = planetSize + 4;
+
       return {
         ...curr,
         ...makeRandomColors(),
         customMode: true,
-        rings: makeRandomRings(oldMin),
-        moons: makeRandomMoons(oldMin),
+        planetSize: planetSize,
+        rings: makeRandomRings(newMin),
+        moons: makeRandomMoons(newMin),
         band: {
           seed: randSeed(),
-          count: Math.ceil(Math.random() * 20),
-          opacity: 40 + Math.random() * 60,
-          angle: -20 + Math.random() * 40,
+          count: randNum(10, 30),
+          opacity: randNum(40, 100),
+          angle: randNum(-180, 180),
         },
         soft: {
           seed: randSeed(),
-          count: 1 + Math.ceil(Math.random() * 8),
-          opacity: 30 + Math.random() * 60,
-          angle: -30 + Math.random() * 60,
+          count: randNum(1, 10),
+          opacity: randNum(30, 90),
+          angle: randNum(-180, 180),
         },
-        planetSize: 16 + Math.floor(Math.random() * 24),
-        backlightGlow: Math.floor(Math.random() * 25),
+        backlightGlow: randNum(0, 25),
       };
     });
   }
@@ -452,10 +467,22 @@ export function PlanetProvider({ children }: { children: ReactNode }) {
 
   function makeLayerHandlers(setter: Dispatch<SetStateAction<LayerConfig>>): LayerConfigHandlers {
     return {
-      onSeedChange: (v) => { setter(p => ({ ...p, seed: v })); markDirty(); },
-      onCountChange: (v) => { setter(p => ({ ...p, count: v })); markDirty(); },
-      onOpacityChange: (v) => { setter(p => ({ ...p, opacity: v })); markDirty(); },
-      onAngleChange: (v) => { setter(p => ({ ...p, angle: v })); markDirty(); },
+      onSeedChange: (v) => {
+        setter(p => ({ ...p, seed: v }));
+        markDirty();
+      },
+      onCountChange: (v) => {
+        setter(p => ({ ...p, count: v }));
+        markDirty();
+      },
+      onOpacityChange: (v) => {
+        setter(p => ({ ...p, opacity: v }));
+        markDirty();
+      },
+      onAngleChange: (v) => {
+        setter(p => ({ ...p, angle: v }));
+        markDirty();
+      },
     };
   }
 
