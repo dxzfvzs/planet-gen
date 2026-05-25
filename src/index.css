@@ -47,7 +47,6 @@ a:hover {
   font-weight: bold;
 }
 
-/* target just the tab content scroller */
 ::-webkit-scrollbar {
   width: 6px;
 }
