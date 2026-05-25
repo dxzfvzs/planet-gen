@@ -210,12 +210,14 @@ export function PlanetProvider({ children }: { children: ReactNode }) {
   // is discarded — only Checkpoint and explicit actions (preset/randomise)
   // ever write to history.
   function commit(label: string, mutate: (curr: PlanetSnapshot) => PlanetSnapshot) {
+    const dirtySnap = !isAnchored ? takeSnapshot("Unsaved edits") : null;
     const newSnap = mutate(takeSnapshot(label));
     const currentCursor = cursor;
     setHistory(prev => {
       const trunk = prev.slice(currentCursor);
-      if (snapshotsEqual(newSnap, trunk[0])) return prev;
-      return [newSnap, ...trunk];
+      const base = (dirtySnap && !snapshotsEqual(dirtySnap, trunk[0])) ? [dirtySnap, ...trunk] : trunk;
+      if (snapshotsEqual(newSnap, base[0])) return prev;
+      return [newSnap, ...base];
     });
     setCursor(0);
     setIsAnchored(true);
