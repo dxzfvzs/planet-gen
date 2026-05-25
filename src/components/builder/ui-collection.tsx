@@ -135,12 +135,13 @@ export function ColorInput({ value, onChange, label }: {
   );
 }
 
-export function ClickableButton({ onClick, label, icon: Icon, disabled, className = "" }: {
+export function ClickableButton({ onClick, label, icon: Icon, disabled, className = "", tooltip }: {
   onClick: () => void;
   label: string;
   icon: LucideIcon;
   disabled?: boolean;
   className?: string;
+  tooltip?: string;
 }) {
   return (
     <button
@@ -153,6 +154,7 @@ export function ClickableButton({ onClick, label, icon: Icon, disabled, classNam
         disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white/5
         ${className}
       `}
+      title={tooltip}
     >
       <Icon size={12}/>
       {label}
@@ -160,8 +162,8 @@ export function ClickableButton({ onClick, label, icon: Icon, disabled, classNam
   );
 }
 
-export function RandomiseButton({ onClick, disabled }: { onClick: () => void, disabled?: boolean }) {
-  return <ClickableButton onClick={onClick} icon={Shuffle} label={"Randomise colors"} disabled={disabled}/>
+export function RandomiseButton({ onClick, disabled, label }: { onClick: () => void, disabled?: boolean, label: string }) {
+  return <ClickableButton onClick={onClick} icon={Shuffle} label={label} disabled={disabled}/>
 }
 
 export function StepBack({ onClick, disabled }: { onClick: () => void, disabled?: boolean }) {

@@ -34,7 +34,7 @@ body {
 main {
   flex: 1;
   width: 80%;
-  margin: 3em auto;
+  margin: 2em auto;
   min-height: 100%;
 }
 
@@ -45,4 +45,21 @@ a {
 
 a:hover {
   font-weight: bold;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-bg-content) 40%, transparent);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--color-bg-content) 70%, transparent);
 }

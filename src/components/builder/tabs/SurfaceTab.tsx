@@ -1,5 +1,6 @@
 import { Label, SectionHead, SliderRow, TextInputWithShuffle } from "../ui-collection.tsx";
 import { randSeed } from "../lib.ts";
+import { usePlanet } from "../usePlanet.ts";
 
 export interface LayerConfig {
   seed: string;
@@ -13,13 +14,6 @@ export interface LayerConfigHandlers {
   onCountChange: (v: number) => void;
   onOpacityChange: (v: number) => void;
   onAngleChange: (v: number) => void;
-}
-
-interface SurfaceTabProps {
-  band: LayerConfig;
-  soft: LayerConfig;
-  bandHandlers: LayerConfigHandlers;
-  softHandlers: LayerConfigHandlers;
 }
 
 interface LayerSectionProps {
@@ -50,7 +44,9 @@ function LayerSection({ title, countMax, config, handlers }: LayerSectionProps) 
   );
 }
 
-export function SurfaceTab({ band, soft, bandHandlers, softHandlers }: SurfaceTabProps) {
+export function SurfaceTab() {
+  const { band, soft, bandHandlers, softHandlers } = usePlanet();
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <LayerSection title={`Primary ("Shadow") Smudge`} countMax={30} config={band} handlers={bandHandlers}/>

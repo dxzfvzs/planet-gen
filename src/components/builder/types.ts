@@ -1,6 +1,7 @@
-export type TabId = "palette" | "surface" | "rings" | "moons" | "animation";
+export type TabId = "preset" | "palette" | "surface" | "rings" | "moons" | "animation";
 
 export const TABS: { id: TabId; label: string }[] = [
+  { id: "preset", label: "Preset" },
   { id: "palette", label: "Color" },
   { id: "surface", label: "Surface" },
   { id: "rings", label: "Rings" },
@@ -9,7 +10,7 @@ export const TABS: { id: TabId; label: string }[] = [
 ];
 
 export interface MoonConfig {
-  uid: string;
+  id: string;
   orbitRx: number;
   orbitRy: number;
   orbitTilt: number;
