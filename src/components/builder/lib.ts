@@ -12,9 +12,13 @@ export function uid() {
   return Math.random().toString(36).slice(2, 9);
 }
 
-export function randNum(min: number, max: number, step: number = 1): number {
+export function randNum(min: number, max: number, step = 1): number {
   const v = min + Math.random() * (max - min);
-  return Math.round(v / step) * step;
+  const snapped = Math.round(v / step) * step;
+
+  const decimals = (step.toString().split(".")[1] ?? "").length;
+
+  return Number(snapped.toFixed(decimals));
 }
 
 export function snapshotsEqual(a?: PlanetSnapshot, b?: PlanetSnapshot) {
