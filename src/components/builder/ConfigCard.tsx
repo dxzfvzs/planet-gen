@@ -45,7 +45,7 @@ function TrashButton({ onClick }: { onClick: () => void }) {
   return (
     <button onClick={() => onClick()}
             className="cursor-pointer text-white transition-colors bg-red-500 hover:bg-red-600 p-1 rounded-2xl">
-      <X size={13}/>
+      <X size={15} strokeWidth={3}/>
     </button>
   );
 }
