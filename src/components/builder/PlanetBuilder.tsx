@@ -122,14 +122,14 @@ function PlanetBuilderInner() {
       {/* right: tab panel */}
       <div
         className="flex-1 min-w-0 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl max-h-[40em] min-h-[30em] overflow-hidden flex flex-col">
-        <div className="flex border-b border-white/10 shrink-0">
+        <div className="flex shrink-0 flex-wrap bg-bg">
           {TABS.map((t) => (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
               className={[
-                "flex-1 py-2 text-[12px] font-mono uppercase tracking-widest transition",
-                tab === t.id ? "bg-white/5 text-violet-100" : "text-white/50 hover:bg-white/5 hover:text-white",
+                "flex-1 py-2 px-4 text-[12px] font-mono uppercase tracking-widest transition rounded-t-xl",
+                tab === t.id ? "bg-white/5 text-white" : "text-white/50 hover:bg-white/[3%] hover:text-white",
               ].join(" ")}
             >
               {t.label}
