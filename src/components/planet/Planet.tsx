@@ -235,7 +235,7 @@ export function Planet(
 
       <AnimationWrapper animation={animation}>
         <RotateToFollowSun enabled={followSun}>
-          <Backlight planetSize={planetSize} key={id} glow={backlightGlow / 100}/>
+          <Backlight planetSize={planetSize} id={id} glow={backlightGlow / 100}/>
           <circle cx={0} cy={0} r={planetSize} fill={`url(#${pid}_base)`}/>
         </RotateToFollowSun>
         {bandLayer}

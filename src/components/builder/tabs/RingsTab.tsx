@@ -38,6 +38,7 @@ export function RingsTab() {
     <div className="grid gap-3 justify-start [grid-template-columns:repeat(auto-fill,13.9em)]">
       {rings.map((r, i) => (
         <ConfigCard
+          key={`Ring ${i + 1}`}
           title={`Ring ${i + 1}`}
           onRemove={() => remove(r.uid)}
           onHighlight={() => setHighlightedId(r.uid)}

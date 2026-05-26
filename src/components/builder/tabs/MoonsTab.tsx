@@ -40,6 +40,7 @@ export function MoonsTab() {
     <div className="grid gap-3 justify-start [grid-template-columns:repeat(auto-fill,13.9em)]">
       {moons.map((m, i) => (
         <ConfigCard
+          key={`Moon ${i + 1}`}
           title={`Moon ${i + 1}`}
           onRemove={() => remove(m.id)}
           onHighlight={() => setHighlightedId(m.id)}
