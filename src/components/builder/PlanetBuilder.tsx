@@ -28,6 +28,7 @@ function PlanetBuilderInner() {
     canUndo, canRedo, canSave,
     undoLabel, redoLabel,
     saveSnapshot, undo, redo,
+    highlightedId,
   } = usePlanet();
 
   const gradient = useMemo(
@@ -95,6 +96,7 @@ function PlanetBuilderInner() {
             moons={planetMoons}
             animation={animation}
             backlightGlow={backlightGlow}
+            highlightedId={highlightedId}
           />
         </div>
 

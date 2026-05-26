@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import { Plus, X } from "lucide-react";
+import { Locate, Plus, X } from "lucide-react";
 
 interface AddCardProps {
   label: string;
@@ -10,6 +10,8 @@ interface ConfigCardProps {
   title: string;
   onRemove: () => void;
   children: ReactNode;
+  onHighlight?: () => void;
+  onHighlightEnd?: () => void;
 }
 
 export function AddCard({ label, onClick }: AddCardProps) {
@@ -50,20 +52,21 @@ function TrashButton({ onClick }: { onClick: () => void }) {
   );
 }
 
-export function ConfigCard({ title, onRemove, children }: ConfigCardProps) {
+export function ConfigCard({ title, onRemove, children, onHighlight, onHighlightEnd }: ConfigCardProps) {
   return (
-    <div className="relative w-full rounded-xl border border-white/8 bg-white/3 pt-1 p-3">
-      <div className="absolute -right-2 -top-2">
+    <div className="relative w-full rounded-xl border border-white/8 bg-white/3">
+      <div className="absolute -right-2 -top-2 flex gap-1">
         <TrashButton onClick={onRemove}/>
       </div>
 
-      <div className="mb-4">
-        <span className="text-[10px] font-mono uppercase tracking-widest text-white/50">
-          {title}
-        </span>
+      <div
+        className="mb-2 w-full cursor-help bg-bg px-3 py-2 rounded-t-xl font-mono uppercase tracking-widest text-[11px] flex gap-2"
+        onMouseEnter={onHighlight} onMouseLeave={onHighlightEnd}>
+        <Locate size={15} className={"my-auto"}/>
+        <span className="opacity-70">{title}</span>
       </div>
 
-      <div className="space-y-2.5">
+      <div className="space-y-2.5 pt-1 p-3">
         {children}
       </div>
     </div>

@@ -5,6 +5,7 @@ import { type ReactNode, useMemo } from "react";
 import { generateSmudges } from "./smudge-helper.ts";
 
 export interface PlanetRing {
+  uid?: string;
   rx: number;
   ry: number;
   stroke: string;
@@ -75,6 +76,8 @@ export interface PlanetProps {
   canvasSize?: number;
   /** Whether to make the core of the planet rotate to follow sun, affects moons as well */
   followSun?: boolean;
+  /** ID of the ring or moon currently being highlighted (from card hover) */
+  highlightedId?: string | null;
 }
 
 const AnimationWrapper = ({ animation, children }: { animation: AnimationMode; children: ReactNode }) => {
@@ -113,6 +116,7 @@ export function Planet(
     backlightGlow,
     canvasSize = 220,
     followSun = false,
+    highlightedId = null,
   }: PlanetProps) {
   const pid = `planet_${id}`;
 
@@ -159,6 +163,33 @@ export function Planet(
       transform={`rotate(${r.angle ?? 0})`}
     />
   ));
+
+  const ringHighlightLayer = rings.map((r, i) => {
+    const isHighlighted = r.uid != null && r.uid === highlightedId;
+    return (
+      <ellipse
+        key={`hl-${i}`}
+        cx={0} cy={2.5}
+        rx={r.rx} ry={r.ry}
+        fill="none"
+        stroke="white"
+        strokeWidth={r.strokeWidth}
+        strokeOpacity={isHighlighted ? 1 : 0}
+        transform={`rotate(${r.angle ?? 0})`}
+        mask={`url(#${pid}_occMask)`}
+        style={{ transition: "stroke-opacity 0.15s ease", pointerEvents: "none" }}
+      >
+        {isHighlighted && (
+          <animate
+            attributeName="stroke-opacity"
+            values="1;0.1;1"
+            dur="1s"
+            repeatCount="indefinite"
+          />
+        )}
+      </ellipse>
+    );
+  });
 
   return (
     <svg width={canvasSize} height={canvasSize} viewBox="-50 -50 100 100" overflow="visible" id="forge-planet-svg">
@@ -210,6 +241,7 @@ export function Planet(
         {bandLayer}
         {softLayer}
         {ringLayer}
+        {ringHighlightLayer}
 
         {moons.length > 0 && (
           <g mask={`url(#${pid}_occMask)`}>
@@ -226,6 +258,7 @@ export function Planet(
                 baseId={"moonBase"}
                 color={m.color}
                 followSun={followSun}
+                highlight={m.id === highlightedId}
               />
             ))}
           </g>

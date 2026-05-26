@@ -5,7 +5,7 @@ import { randHex, uid } from "../lib.ts";
 import { usePlanet } from "../usePlanet.ts";
 
 export function MoonsTab() {
-  const { moons, handleMoonsChange, minOrbit } = usePlanet();
+  const { moons, handleMoonsChange, minOrbit, setHighlightedId } = usePlanet();
 
   function randStep(min: number, max: number, step: number = 1) {
     const steps = Math.floor((max - min) / step);
@@ -39,7 +39,12 @@ export function MoonsTab() {
   return (
     <div className="grid gap-3 justify-start [grid-template-columns:repeat(auto-fill,13.9em)]">
       {moons.map((m, i) => (
-        <ConfigCard key={m.id} title={`Moon ${i + 1}`} onRemove={() => remove(m.id)}>
+        <ConfigCard
+          title={`Moon ${i + 1}`}
+          onRemove={() => remove(m.id)}
+          onHighlight={() => setHighlightedId(m.id)}
+          onHighlightEnd={() => setHighlightedId(null)}
+        >
           <SliderRow label="Radius" value={m.radius} min={0.5} max={10} step={0.5}
                      onChange={(v) => updateMoon(m.id, "radius", v)}/>
           <SliderRow label="Orbit X" value={m.orbitRx} min={minOrbit + m.radius} max={90}

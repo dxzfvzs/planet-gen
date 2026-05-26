@@ -5,7 +5,7 @@ import { randHex, uid } from "../lib.ts";
 import { usePlanet } from "../usePlanet.ts";
 
 export function RingsTab() {
-  const { rings, handleRingsChange, minOrbit } = usePlanet();
+  const { rings, handleRingsChange, minOrbit, setHighlightedId } = usePlanet();
 
   function randStep(min: number, max: number, step: number = 1) {
     const steps = Math.floor((max - min) / step);
@@ -37,7 +37,12 @@ export function RingsTab() {
   return (
     <div className="grid gap-3 justify-start [grid-template-columns:repeat(auto-fill,13.9em)]">
       {rings.map((r, i) => (
-        <ConfigCard key={r.uid} title={`Ring ${i + 1}`} onRemove={() => remove(r.uid)}>
+        <ConfigCard
+          title={`Ring ${i + 1}`}
+          onRemove={() => remove(r.uid)}
+          onHighlight={() => setHighlightedId(r.uid)}
+          onHighlightEnd={() => setHighlightedId(null)}
+        >
           <SliderRow label="Orbit X" value={r.rx} min={minOrbit + r.strokeWidth * 2} max={90}
                      onChange={(v) => updateRing(r.uid, "rx", v)}/>
           <SliderRow label="Orbit Y" value={r.ry} min={6} max={25} onChange={(v) => updateRing(r.uid, "ry", v)}/>
