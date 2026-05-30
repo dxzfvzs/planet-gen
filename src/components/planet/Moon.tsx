@@ -2,41 +2,42 @@ import { RotateToFollowSun } from "./Rotation.tsx";
 import { generateSmudges } from "./smudge-helper.ts";
 
 type MoonProps = {
-  orbitRx: number
-  orbitRy: number
-  orbitTilt?: number
-  orbitOffsetX?: number
-  orbitOffsetY?: number
-  radius: number
-  duration: string
-  id: string
-  begin?: number
-  baseId: string,
-  color?: string,
-  followSun?: boolean
-  highlight?: boolean
-}
+  orbitRx: number;
+  orbitRy: number;
+  orbitTilt?: number;
+  orbitOffsetX?: number;
+  orbitOffsetY?: number;
+  radius: number;
+  duration: string;
+  id: string;
+  begin?: number;
+  baseId: string;
+  color?: string;
+  followSun?: boolean;
+  highlight?: boolean;
+  onClick?: () => void;
+};
 
 const debug = false;
 
-export function Moon(
-  {
-    orbitRx,
-    orbitRy,
-    orbitTilt = 0,
-    orbitOffsetX = 0,
-    orbitOffsetY = 0,
-    radius,
-    duration,
-    id,
-    begin = 0,
-    baseId = "moonBase",
-    color,
-    followSun = false,
-    highlight = false,
-  }: MoonProps) {
-  const orbitId = `orbit-${id}-${baseId}`
-  const d = `M 0 0 m ${-orbitRx + orbitOffsetX} ${orbitOffsetY} a ${orbitRx} ${orbitRy} ${orbitTilt} 1 1 ${orbitRx * 2} 0 a ${orbitRx} ${orbitRy} ${orbitTilt} 1 1 ${-orbitRx * 2} 0`
+export function Moon({
+  orbitRx,
+  orbitRy,
+  orbitTilt = 0,
+  orbitOffsetX = 0,
+  orbitOffsetY = 0,
+  radius,
+  duration,
+  id,
+  begin = 0,
+  baseId = "moonBase",
+  color,
+  followSun = false,
+  highlight = false,
+  onClick,
+}: MoonProps) {
+  const orbitId = `orbit-${id}-${baseId}`;
+  const d = `M 0 0 m ${-orbitRx + orbitOffsetX} ${orbitOffsetY} a ${orbitRx} ${orbitRy} ${orbitTilt} 1 1 ${orbitRx * 2} 0 a ${orbitRx} ${orbitRy} ${orbitTilt} 1 1 ${-orbitRx * 2} 0`;
 
   const smudgesBand = generateSmudges(orbitId, radius, color ?? "#202020");
 
@@ -44,27 +45,34 @@ export function Moon(
     <g>
       <defs>
         <clipPath id={`moonClip-${id}`}>
-          <circle r={radius}/>
+          <circle r={radius} />
         </clipPath>
-        <path id={orbitId} d={d}/>
+        <path id={orbitId} d={d} />
       </defs>
 
       {(debug || highlight) && (
-        <path d={d} fill="none" strokeWidth={1} strokeDasharray={2} stroke={"#ffffff"} strokeOpacity={0.5}/>
+        <path
+          d={d}
+          fill="none"
+          strokeWidth={1}
+          strokeDasharray={2}
+          stroke={"#ffffff"}
+          strokeOpacity={0.5}
+        />
       )}
 
       <g>
         <animateMotion dur={duration} repeatCount="indefinite" begin={`${begin}s`}>
-          <mpath href={`#${orbitId}`}/>
+          <mpath href={`#${orbitId}`} />
         </animateMotion>
 
         <RotateToFollowSun enabled={followSun}>
-          <g>
-            <circle r={radius} fill={`url(#${baseId})`}/>
+          <g onClick={onClick} style={{ cursor: onClick ? "pointer" : undefined }}>
+            <circle r={radius} fill={`url(#${baseId})`} />
 
             <g clipPath={`url(#moonClip-${id})`} opacity="0.8">
               {smudgesBand.map((s, i) => (
-                <ellipse key={i} {...s} transform={`rotate(${s.rotate})`}/>
+                <ellipse key={i} {...s} transform={`rotate(${s.rotate})`} />
               ))}
             </g>
 
@@ -77,6 +85,9 @@ export function Moon(
                 repeatCount="indefinite"
               />
             </circle>
+
+            {/* Clickable hit area but slightly larger than the moon */}
+            <circle r={radius + 2} fill="transparent" />
 
             <circle
               r={radius + 1.2}
@@ -99,5 +110,5 @@ export function Moon(
         </RotateToFollowSun>
       </g>
     </g>
-  )
+  );
 }

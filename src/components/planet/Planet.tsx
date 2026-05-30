@@ -42,18 +42,18 @@ type JiggleAnimation = {
   type: "jiggle";
   duration: number;
   angle: number;
-}
+};
 
 type RotateAnimation = {
   type: "rotate";
   duration: number;
   invertRotation?: boolean;
-}
+};
 
 type StaticAnimation = {
   type: "static";
   angle: number;
-}
+};
 
 export type AnimationMode = JiggleAnimation | RotateAnimation | StaticAnimation;
 
@@ -78,19 +78,30 @@ export interface PlanetProps {
   followSun?: boolean;
   /** ID of the ring or moon currently being highlighted (from card hover) */
   highlightedId?: string | null;
+  /** Called when user clicks a moon or ring in the SVG — triggers card highlight */
+  onSelectId?: (id: string | null) => void;
 }
 
-const AnimationWrapper = ({ animation, children }: { animation: AnimationMode; children: ReactNode }) => {
+const AnimationWrapper = ({
+  animation,
+  children,
+}: {
+  animation: AnimationMode;
+  children: ReactNode;
+}) => {
   switch (animation.type) {
     case "jiggle":
       return (
         <Jiggle duration={animation.duration ?? 25} angle={animation.angle ?? 15}>
           {children}
         </Jiggle>
-      )
+      );
     case "rotate":
       return (
-        <RotatingGroup duration={animation.duration || 0} invertRotation={animation.invertRotation ?? false}>
+        <RotatingGroup
+          duration={animation.duration || 0}
+          invertRotation={animation.invertRotation ?? false}
+        >
           {children}
         </RotatingGroup>
       );
@@ -103,49 +114,73 @@ const AnimationWrapper = ({ animation, children }: { animation: AnimationMode; c
   }
 };
 
-export function Planet(
-  {
-    id,
-    planetSize,
-    gradient,
-    band,
-    soft,
-    rings,
-    moons,
-    animation,
-    backlightGlow,
-    canvasSize = 220,
-    followSun = false,
-    highlightedId = null,
-  }: PlanetProps) {
+export function Planet({
+  id,
+  planetSize,
+  gradient,
+  band,
+  soft,
+  rings,
+  moons,
+  animation,
+  backlightGlow,
+  canvasSize = 220,
+  followSun = false,
+  highlightedId = null,
+  onSelectId,
+}: PlanetProps) {
   const pid = `planet_${id}`;
 
   const bandSmudges = useMemo(
     () => generateSmudges(band.seedStr, planetSize, band.baseColor, band.count ?? 12),
-    [band.seedStr, planetSize, band.baseColor, band.count],
+    [band.seedStr, planetSize, band.baseColor, band.count]
   );
 
   const softSmudges = useMemo(
     () => generateSmudges(soft.seedStr, planetSize, soft.baseColor, soft.count ?? 4),
-    [soft.seedStr, planetSize, soft.baseColor, soft.count],
+    [soft.seedStr, planetSize, soft.baseColor, soft.count]
   );
 
   const bandLayer = (
-    <g clipPath={`url(#${pid}_clip)`} filter="url(#bandBlur)" opacity={band.opacity ?? 1.00}
-       transform={`rotate(${band.angle})`}>
+    <g
+      clipPath={`url(#${pid}_clip)`}
+      filter="url(#bandBlur)"
+      opacity={band.opacity ?? 1.0}
+      transform={`rotate(${band.angle})`}
+    >
       {bandSmudges.map((s, i) => (
-        <ellipse key={i} cx={s.cx} cy={s.cy} rx={s.rx} ry={s.ry}
-                 fill={s.fill} opacity={s.opacity} transform={`rotate(${s.rotate})`}/>
+        <ellipse
+          key={i}
+          cx={s.cx}
+          cy={s.cy}
+          rx={s.rx}
+          ry={s.ry}
+          fill={s.fill}
+          opacity={s.opacity}
+          transform={`rotate(${s.rotate})`}
+        />
       ))}
     </g>
   );
 
   const softLayer = (
-    <g clipPath={`url(#${pid}_clip)`} filter="url(#softBlur)" opacity={soft.opacity ?? 0.55}
-       transform={`rotate(${soft.angle})`}>
+    <g
+      clipPath={`url(#${pid}_clip)`}
+      filter="url(#softBlur)"
+      opacity={soft.opacity ?? 0.55}
+      transform={`rotate(${soft.angle})`}
+    >
       {softSmudges.map((s, i) => (
-        <ellipse key={i} cx={s.cx} cy={s.cy} rx={s.rx} ry={s.ry}
-                 fill={s.fill} opacity={s.opacity} transform={`rotate(${s.rotate})`}/>
+        <ellipse
+          key={i}
+          cx={s.cx}
+          cy={s.cy}
+          rx={s.rx}
+          ry={s.ry}
+          fill={s.fill}
+          opacity={s.opacity}
+          transform={`rotate(${s.rotate})`}
+        />
       ))}
     </g>
   );
@@ -153,14 +188,18 @@ export function Planet(
   const ringLayer = rings.map((r, i) => (
     <ellipse
       key={i}
-      cx={0} cy={2.5}
-      rx={r.rx} ry={r.ry}
+      cx={0}
+      cy={2.5}
+      rx={r.rx}
+      ry={r.ry}
       fill={"none"}
       stroke={r.stroke}
       strokeWidth={r.strokeWidth}
       strokeOpacity={r.strokeOpacity}
       mask={`url(#${pid}_occMask)`}
       transform={`rotate(${r.angle ?? 0})`}
+      onClick={() => onSelectId?.(r.uid === highlightedId ? null : (r.uid ?? null))}
+      style={{ cursor: onSelectId ? "pointer" : undefined }}
     />
   ));
 
@@ -169,8 +208,10 @@ export function Planet(
     return (
       <ellipse
         key={`hl-${i}`}
-        cx={0} cy={2.5}
-        rx={r.rx} ry={r.ry}
+        cx={0}
+        cy={2.5}
+        rx={r.rx}
+        ry={r.ry}
         fill="none"
         stroke="white"
         strokeWidth={r.strokeWidth}
@@ -192,51 +233,57 @@ export function Planet(
   });
 
   return (
-    <svg width={canvasSize} height={canvasSize} viewBox="-50 -50 100 100" overflow="visible" id="forge-planet-svg">
+    <svg
+      width={canvasSize}
+      height={canvasSize}
+      viewBox="-50 -50 100 100"
+      overflow="visible"
+      id="forge-planet-svg"
+    >
       <defs>
         <radialGradient id={`${pid}_base`} cx="35%" cy="28%" r="62%">
           {gradient.map((s, i) => (
-            <stop key={i} offset={s.offset} stopColor={s.stopColor}/>
+            <stop key={i} offset={s.offset} stopColor={s.stopColor} />
           ))}
         </radialGradient>
 
         <clipPath id={`${pid}_clip`}>
-          <circle cx={0} cy={0} r={planetSize}/>
+          <circle cx={0} cy={0} r={planetSize} />
         </clipPath>
 
         <mask id={`${pid}_occMask`}>
-          <rect x="-200" y="-200" width="400" height="400" fill="white"/>
-          <circle cx={0} cy={0} r={planetSize} fill="url(#planetOcclusionMaskShade)"/>
+          <rect x="-200" y="-200" width="400" height="400" fill="white" />
+          <circle cx={0} cy={0} r={planetSize} fill="url(#planetOcclusionMaskShade)" />
         </mask>
 
         {/* Defined occlusion for half visible-half not planet overlay. For moons, rings, etc. */}
         <linearGradient id="planetOcclusionMaskShade" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="black"/>
-          <stop offset="50%" stopColor="black"/>
-          <stop offset="50%" stopColor="white"/>
-          <stop offset="100%" stopColor="white"/>
+          <stop offset="0%" stopColor="black" />
+          <stop offset="50%" stopColor="black" />
+          <stop offset="50%" stopColor="white" />
+          <stop offset="100%" stopColor="white" />
         </linearGradient>
 
         {/* Two possible blurs for surface level planetary bands.*/}
         <filter id="bandBlur" x="-20%" y="-50%" width="140%" height="200%">
-          <feGaussianBlur stdDeviation="1.5 0.7"/>
+          <feGaussianBlur stdDeviation="1.5 0.7" />
         </filter>
         <filter id="softBlur" x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur stdDeviation="1.8"/>
+          <feGaussianBlur stdDeviation="1.8" />
         </filter>
 
         {/* Moon base color.*/}
         <radialGradient id="moonBase" cx="32%" cy="28%" r="70%">
-          <stop offset="0%" stopColor="#ffffff"/>
-          <stop offset="55%" stopColor="#c5c9cc"/>
-          <stop offset="100%" stopColor="#1d2732"/>
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="55%" stopColor="#c5c9cc" />
+          <stop offset="100%" stopColor="#1d2732" />
         </radialGradient>
       </defs>
 
       <AnimationWrapper animation={animation}>
         <RotateToFollowSun enabled={followSun}>
-          <Backlight planetSize={planetSize} id={id} glow={backlightGlow / 100}/>
-          <circle cx={0} cy={0} r={planetSize} fill={`url(#${pid}_base)`}/>
+          <Backlight planetSize={planetSize} id={id} glow={backlightGlow / 100} />
+          <circle cx={0} cy={0} r={planetSize} fill={`url(#${pid}_base)`} />
         </RotateToFollowSun>
         {bandLayer}
         {softLayer}
@@ -259,6 +306,7 @@ export function Planet(
                 color={m.color}
                 followSun={followSun}
                 highlight={m.id === highlightedId}
+                onClick={() => onSelectId?.(m.id === highlightedId ? null : m.id)}
               />
             ))}
           </g>
