@@ -1,4 +1,4 @@
-import { ToggleButton, SectionHead, SliderRow } from "../ui-collection.tsx";
+import { SectionCard, SliderRow, ToggleButton } from "../ui-collection.tsx";
 
 export type AnimationType = "jiggle" | "rotate" | "static";
 
@@ -17,46 +17,85 @@ interface AnimationTabProps {
 
 export function AnimationTab({
   animMode,
-  jiggleDuration, jiggleAngle,
-  rotateDuration, invertRotation,
+  jiggleDuration,
+  jiggleAngle,
+  rotateDuration,
+  invertRotation,
   onAnimModeChange,
-  onJiggleDurationChange, onJiggleAngleChange,
-  onRotateDurationChange, onInvertRotationChange,
+  onJiggleDurationChange,
+  onJiggleAngleChange,
+  onRotateDurationChange,
+  onInvertRotationChange,
 }: AnimationTabProps) {
   return (
-    <div className="space-y-4">
-      <SectionHead>Mode</SectionHead>
-
-      <div className="flex gap-2">
-        <ToggleButton active={animMode === "jiggle"} onClick={() => onAnimModeChange("jiggle")}>Jiggle</ToggleButton>
-        <ToggleButton active={animMode === "rotate"} onClick={() => onAnimModeChange("rotate")}>Rotate</ToggleButton>
-        <ToggleButton active={animMode === "static"} onClick={() => onAnimModeChange("static")}>Static</ToggleButton>
-      </div>
+    <div className="space-y-3">
+      <SectionCard title="Mode">
+        <div className="flex gap-2">
+          <ToggleButton active={animMode === "jiggle"} onClick={() => onAnimModeChange("jiggle")}>
+            Jiggle
+          </ToggleButton>
+          <ToggleButton active={animMode === "rotate"} onClick={() => onAnimModeChange("rotate")}>
+            Rotate
+          </ToggleButton>
+          <ToggleButton active={animMode === "static"} onClick={() => onAnimModeChange("static")}>
+            Static
+          </ToggleButton>
+        </div>
+      </SectionCard>
 
       {animMode === "jiggle" && (
-        <>
-          <SectionHead>Jiggle settings</SectionHead>
-          <SliderRow label="Duration" value={jiggleDuration} min={1} max={240} unit="s" onChange={onJiggleDurationChange} />
-          <SliderRow label="Angle" value={jiggleAngle} min={0} max={360} unit="°" onChange={onJiggleAngleChange} />
-        </>
+        <SectionCard title="Jiggle settings">
+          <SliderRow
+            label="Duration"
+            value={jiggleDuration}
+            min={1}
+            max={240}
+            unit="s"
+            onChange={onJiggleDurationChange}
+          />
+          <SliderRow
+            label="Angle"
+            value={jiggleAngle}
+            min={0}
+            max={360}
+            unit="°"
+            onChange={onJiggleAngleChange}
+          />
+        </SectionCard>
       )}
 
       {animMode === "rotate" && (
-        <>
-          <SectionHead>Rotation settings</SectionHead>
-          <SliderRow label="Duration" value={rotateDuration} min={1} max={240} unit="s" onChange={onRotateDurationChange} />
+        <SectionCard title="Rotation settings">
+          <SliderRow
+            label="Duration"
+            value={rotateDuration}
+            min={1}
+            max={240}
+            unit="s"
+            onChange={onRotateDurationChange}
+          />
           <div className="mt-1 flex gap-2">
-            <ToggleButton active={!invertRotation} onClick={() => onInvertRotationChange(false)}>→ Prograde</ToggleButton>
-            <ToggleButton active={invertRotation} onClick={() => onInvertRotationChange(true)}>← Retrograde</ToggleButton>
+            <ToggleButton active={!invertRotation} onClick={() => onInvertRotationChange(false)}>
+              → Prograde
+            </ToggleButton>
+            <ToggleButton active={invertRotation} onClick={() => onInvertRotationChange(true)}>
+              ← Retrograde
+            </ToggleButton>
           </div>
-        </>
+        </SectionCard>
       )}
 
       {animMode === "static" && (
-        <>
-          <SectionHead>Static settings</SectionHead>
-          <SliderRow label="Angle" value={jiggleAngle} min={0} max={360} unit="°" onChange={onJiggleAngleChange} />
-        </>
+        <SectionCard title="Static settings">
+          <SliderRow
+            label="Angle"
+            value={jiggleAngle}
+            min={0}
+            max={360}
+            unit="°"
+            onChange={onJiggleAngleChange}
+          />
+        </SectionCard>
       )}
     </div>
   );

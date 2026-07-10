@@ -4,33 +4,52 @@ import { randHex } from "./lib.ts";
 
 export function Label({ children }: { children: ReactNode }) {
   return (
-    <span className="text-[11px] tracking-[0.18em] uppercase text-blue-100/80">
-      {children}
-    </span>
+    <span className="text-[11px] tracking-[0.18em] uppercase text-blue-100/80">{children}</span>
   );
 }
 
-export function SectionHead({ children }: { children: ReactNode }) {
+export function SectionCard({ title, children }: { title: ReactNode; children: ReactNode }) {
   return (
-    <div className="flex items-center gap-3 mb-3">
-      <span className="text-[12px] uppercase tracking-[0.2em] text-violet-200/80">
-        {children}
-      </span>
-      <div className="flex-1 h-px bg-gradient-to-r from-white/10 to-transparent"/>
+    <div className="relative w-full rounded-xl bg-bg">
+      <div
+        className="
+          mb-2 w-full px-3 py-2 rounded-t-xl
+          font-mono uppercase tracking-widest text-[11px]
+          select-none bg-bg-darker text-white/85
+        "
+      >
+        <span className="opacity-70">{title}</span>
+      </div>
+
+      <div className="space-y-2.5 pt-1 p-3">{children}</div>
     </div>
   );
 }
 
-export function SliderRow({ label, value, min, max, step = 1, unit = "", onChange }: {
-  label: string; value: number; min: number; max: number;
-  step?: number; unit?: string; onChange: (v: number) => void;
+export function SliderRow({
+  label,
+  value,
+  min,
+  max,
+  step = 1,
+  unit = "",
+  onChange,
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step?: number;
+  unit?: string;
+  onChange: (v: number) => void;
 }) {
   return (
     <div className="mb-3 last:mb-0">
       <div className="flex justify-between mb-1">
         <Label>{label}</Label>
         <span className="text-[11px] font-mono text-violet-200/70">
-          {value}{unit}
+          {value}
+          {unit}
         </span>
       </div>
 
@@ -51,10 +70,14 @@ export function SliderRow({ label, value, min, max, step = 1, unit = "", onChang
   );
 }
 
-export function ToggleButton({ active, onClick, children }: {
+export function ToggleButton({
+  active,
+  onClick,
+  children,
+}: {
   active?: boolean;
   onClick: () => void;
-  children: ReactNode
+  children: ReactNode;
 }) {
   return (
     <button
@@ -63,10 +86,10 @@ export function ToggleButton({ active, onClick, children }: {
         px-3 py-1 rounded-lg text-[10px] font-mono tracking-widest uppercase
         transition-all border backdrop-blur-md cursor-pointer
         ${
-        active
-          ? "bg-violet-500/25 border-violet-300/40 text-violet-100"
-          : "bg-white/5 border-white/10 text-violet-200/60 hover:bg-white/10 hover:text-violet-100"
-      }
+          active
+            ? "bg-violet-500/25 border-violet-300/40 text-violet-100"
+            : "bg-white/5 border-white/10 text-violet-200/60 hover:bg-white/10 hover:text-violet-100"
+        }
       `}
     >
       {children}
@@ -74,14 +97,20 @@ export function ToggleButton({ active, onClick, children }: {
   );
 }
 
-export function TextInput({ value, onChange, placeholder }: {
+export function TextInput({
+  value,
+  onChange,
+  placeholder,
+}: {
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
 }) {
   return (
     <input
-      type="text" value={value} placeholder={placeholder}
+      type="text"
+      value={value}
+      placeholder={placeholder}
       onChange={(e) => onChange(e.target.value)}
       className={`
         w-full bg-white/5 border border-white/10
@@ -94,7 +123,12 @@ export function TextInput({ value, onChange, placeholder }: {
   );
 }
 
-export function TextInputWithShuffle({ value, onChange, placeholder, onShuffleClick }: {
+export function TextInputWithShuffle({
+  value,
+  onChange,
+  placeholder,
+  onShuffleClick,
+}: {
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
@@ -102,16 +136,20 @@ export function TextInputWithShuffle({ value, onChange, placeholder, onShuffleCl
 }) {
   return (
     <div className="my-1 flex gap-1 w-full flex-row justify-center">
-      <TextInput value={value} onChange={onChange} placeholder={placeholder}/>
-      <ClickableButton onClick={() => onShuffleClick()} label={""} icon={Shuffle}/>
+      <TextInput value={value} onChange={onChange} placeholder={placeholder} />
+      <ClickableButton onClick={() => onShuffleClick()} label={""} icon={Shuffle} />
     </div>
   );
 }
 
-export function ColorInput({ value, onChange, label }: {
+export function ColorInput({
+  value,
+  onChange,
+  label,
+}: {
   value: string;
   onChange: (v: string) => void;
-  label?: string
+  label?: string;
 }) {
   return (
     <div className="flex items-center gap-2">
@@ -129,13 +167,24 @@ export function ColorInput({ value, onChange, label }: {
             [&::-webkit-color-swatch-wrapper]:p-0
           "
         />
-        <TextInputWithShuffle value={value} onChange={onChange} onShuffleClick={() => onChange(randHex())}/>
+        <TextInputWithShuffle
+          value={value}
+          onChange={onChange}
+          onShuffleClick={() => onChange(randHex())}
+        />
       </div>
     </div>
   );
 }
 
-export function ClickableButton({ onClick, label, icon: Icon, disabled, className = "", tooltip }: {
+export function ClickableButton({
+  onClick,
+  label,
+  icon: Icon,
+  disabled,
+  className = "",
+  tooltip,
+}: {
   onClick: () => void;
   label: string;
   icon: LucideIcon;
@@ -156,24 +205,37 @@ export function ClickableButton({ onClick, label, icon: Icon, disabled, classNam
       `}
       title={tooltip}
     >
-      <Icon size={12}/>
+      <Icon size={12} />
       {label}
     </button>
   );
 }
 
-export function RandomiseButton({ onClick, disabled, label }: { onClick: () => void, disabled?: boolean, label: string }) {
-  return <ClickableButton onClick={onClick} icon={Shuffle} label={label} disabled={disabled}/>
+export function RandomiseButton({
+  onClick,
+  disabled,
+  label,
+}: {
+  onClick: () => void;
+  disabled?: boolean;
+  label: string;
+}) {
+  return <ClickableButton onClick={onClick} icon={Shuffle} label={label} disabled={disabled} />;
 }
 
-export function StepBack({ onClick, disabled }: { onClick: () => void, disabled?: boolean }) {
-  return <ClickableButton onClick={onClick} icon={StepBackIcon} label={"Undo"} disabled={disabled}/>
+export function StepBack({ onClick, disabled }: { onClick: () => void; disabled?: boolean }) {
+  return (
+    <ClickableButton onClick={onClick} icon={StepBackIcon} label={"Undo"} disabled={disabled} />
+  );
 }
 
-export function DownloadButton({ onClick, disabled }: { onClick: () => void, disabled?: boolean }) {
+export function DownloadButton({ onClick, disabled }: { onClick: () => void; disabled?: boolean }) {
   return (
     <ClickableButton
-      onClick={onClick} icon={Download} label={"Download SVG"} disabled={disabled}
+      onClick={onClick}
+      icon={Download}
+      label={"Download SVG"}
+      disabled={disabled}
       className={"w-full "}
     />
   );
