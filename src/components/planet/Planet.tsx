@@ -1,7 +1,7 @@
 import { Jiggle, RotateToFollowSun, RotatingGroup } from "./Rotation.tsx";
 import { Backlight } from "./Backlight.tsx";
 import { Moon } from "./Moon.tsx";
-import { type ReactNode, useMemo } from "react";
+import { type ReactNode, useEffect, useMemo, useRef } from "react";
 import { generateSmudges } from "./smudge-helper.ts";
 
 export interface PlanetRing {
@@ -130,6 +130,35 @@ export function Planet({
   onSelectId,
 }: PlanetProps) {
   const pid = `planet_${id}`;
+  const svgRef = useRef<SVGSVGElement>(null);
+
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+
+    const isFormField = (target: EventTarget | null) =>
+      target instanceof HTMLElement &&
+      (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable);
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Control" && !isFormField(e.target)) svg.pauseAnimations();
+    };
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === "Control") svg.unpauseAnimations();
+    };
+    // Guard against the animation getting stuck paused if the ctrl key
+    // release happens while the window isn't focused (e.g. alt-tab).
+    const handleBlur = () => svg.unpauseAnimations();
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+    window.addEventListener("blur", handleBlur);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+      window.removeEventListener("blur", handleBlur);
+    };
+  }, []);
 
   const bandSmudges = useMemo(
     () => generateSmudges(band.seedStr, planetSize, band.baseColor, band.count ?? 12),
@@ -198,10 +227,39 @@ export function Planet({
       strokeOpacity={r.strokeOpacity}
       mask={`url(#${pid}_occMask)`}
       transform={`rotate(${r.angle ?? 0})`}
-      onClick={() => onSelectId?.(r.uid === highlightedId ? null : (r.uid ?? null))}
-      style={{ cursor: onSelectId ? "pointer" : undefined }}
+      style={{ pointerEvents: "none" }}
     />
   ));
+
+  const ringHitLayer = rings.map((r, i) => {
+    const isHighlighted = r.uid != null && r.uid === highlightedId;
+    const toggle = () => onSelectId?.(r.uid === highlightedId ? null : (r.uid ?? null));
+    return (
+      <ellipse
+        key={`hit-${i}`}
+        cx={0}
+        cy={2.5}
+        rx={r.rx}
+        ry={r.ry}
+        fill="none"
+        stroke="transparent"
+        strokeWidth={r.strokeWidth + 1}
+        mask={`url(#${pid}_occMask)`}
+        transform={`rotate(${r.angle ?? 0})`}
+        role={onSelectId ? "button" : undefined}
+        tabIndex={onSelectId ? 0 : undefined}
+        aria-pressed={onSelectId ? isHighlighted : undefined}
+        onClick={toggle}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            toggle();
+          }
+        }}
+        style={{ cursor: onSelectId ? "pointer" : undefined, outline: "none" }}
+      />
+    );
+  });
 
   const ringHighlightLayer = rings.map((r, i) => {
     const isHighlighted = r.uid != null && r.uid === highlightedId;
@@ -234,6 +292,7 @@ export function Planet({
 
   return (
     <svg
+      ref={svgRef}
       width={canvasSize}
       height={canvasSize}
       viewBox="-50 -50 100 100"
@@ -289,6 +348,7 @@ export function Planet({
         {softLayer}
         {ringLayer}
         {ringHighlightLayer}
+        {ringHitLayer}
 
         {moons.length > 0 && (
           <g mask={`url(#${pid}_occMask)`}>
