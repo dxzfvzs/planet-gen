@@ -1,7 +1,7 @@
 import { Jiggle, RotateToFollowSun, RotatingGroup } from "./Rotation.tsx";
 import { Backlight } from "./Backlight.tsx";
 import { Moon } from "./Moon.tsx";
-import { type ReactNode, useEffect, useMemo, useRef } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { generateSmudges } from "./smudge-helper.ts";
 
 export interface PlanetRing {
@@ -131,6 +131,7 @@ export function Planet({
 }: PlanetProps) {
   const pid = `planet_${id}`;
   const svgRef = useRef<SVGSVGElement>(null);
+  const [focusedId, setFocusedId] = useState<string | null>(null);
 
   useEffect(() => {
     const svg = svgRef.current;
@@ -256,6 +257,8 @@ export function Planet({
             toggle();
           }
         }}
+        onFocus={() => setFocusedId(r.uid ?? null)}
+        onBlur={() => setFocusedId(null)}
         style={{ cursor: onSelectId ? "pointer" : undefined, outline: "none" }}
       />
     );
@@ -263,6 +266,7 @@ export function Planet({
 
   const ringHighlightLayer = rings.map((r, i) => {
     const isHighlighted = r.uid != null && r.uid === highlightedId;
+    const isFocused = r.uid != null && r.uid === focusedId && !isHighlighted;
     return (
       <ellipse
         key={`hl-${i}`}
@@ -273,7 +277,8 @@ export function Planet({
         fill="none"
         stroke="white"
         strokeWidth={r.strokeWidth}
-        strokeOpacity={isHighlighted ? 1 : 0}
+        strokeDasharray={2}
+        strokeOpacity={isHighlighted ? 1 : isFocused ? 0.35 : 0}
         transform={`rotate(${r.angle ?? 0})`}
         mask={`url(#${pid}_occMask)`}
         style={{ transition: "stroke-opacity 0.15s ease", pointerEvents: "none" }}

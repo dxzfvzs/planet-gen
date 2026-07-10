@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { RotateToFollowSun } from "./Rotation.tsx";
 import { generateSmudges } from "./smudge-helper.ts";
 
@@ -38,6 +39,7 @@ export function Moon({
 }: MoonProps) {
   const orbitId = `orbit-${id}-${baseId}`;
   const d = `M 0 0 m ${-orbitRx + orbitOffsetX} ${orbitOffsetY} a ${orbitRx} ${orbitRy} ${orbitTilt} 1 1 ${orbitRx * 2} 0 a ${orbitRx} ${orbitRy} ${orbitTilt} 1 1 ${-orbitRx * 2} 0`;
+  const [focused, setFocused] = useState(false);
 
   const smudgesBand = generateSmudges(orbitId, radius, color ?? "#202020");
 
@@ -67,7 +69,21 @@ export function Moon({
         </animateMotion>
 
         <RotateToFollowSun enabled={followSun}>
-          <g onClick={onClick} style={{ cursor: onClick ? "pointer" : undefined }}>
+          <g
+            onClick={onClick}
+            role={onClick ? "button" : undefined}
+            tabIndex={onClick ? 0 : undefined}
+            aria-pressed={onClick ? highlight : undefined}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onClick?.();
+              }
+            }}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            style={{ cursor: onClick ? "pointer" : undefined, outline: "none" }}
+          >
             <circle r={radius} fill={`url(#${baseId})`} />
 
             <g clipPath={`url(#moonClip-${id})`} opacity="0.8">
@@ -94,7 +110,7 @@ export function Moon({
               fill="none"
               stroke="white"
               strokeWidth={0.8}
-              opacity={highlight ? 1 : 0}
+              opacity={highlight ? 1 : focused ? 0.35 : 0}
               style={{ transition: "opacity 0.15s ease" }}
             >
               {highlight && (
