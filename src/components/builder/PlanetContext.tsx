@@ -86,6 +86,10 @@ export interface PlanetState {
   invertRotation: boolean;
   setInvertRotation: (v: boolean) => void;
 
+  // highlight (hover preview)
+  highlightedId: string | null;
+  setHighlightedId: (id: string | null) => void;
+
   // derived
   colors: [string, string, string];
 }
@@ -111,6 +115,7 @@ export function PlanetProvider({ children }: { children: ReactNode }) {
   // rings & moons
   const [rings, setRings] = useState<RingConfig[]>(DEFAULT_RINGS);
   const [moons, setMoons] = useState<MoonConfig[]>(DEFAULT_MOONS);
+  const [highlightedId, setHighlightedId] = useState<string | null>(null);
 
   // animation
   const [animMode, setAnimModeRaw] = useState<AnimationType>("jiggle");
@@ -518,6 +523,7 @@ export function PlanetProvider({ children }: { children: ReactNode }) {
     rings, moons,
     handleRingsChange, handleMoonsChange,
     minOrbit,
+    highlightedId, setHighlightedId,
     animMode, setAnimMode,
     jiggleDuration, setJiggleDuration,
     jiggleAngle, setJiggleAngle,

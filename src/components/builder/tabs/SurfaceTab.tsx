@@ -1,4 +1,4 @@
-import { Label, SectionHead, SliderRow, TextInputWithShuffle } from "../ui-collection.tsx";
+import { Label, SectionCard, SliderRow, TextInputWithShuffle } from "../ui-collection.tsx";
 import { randSeed } from "../lib.ts";
 import { usePlanet } from "../usePlanet.ts";
 
@@ -25,9 +25,8 @@ interface LayerSectionProps {
 
 function LayerSection({ title, countMax, config, handlers }: LayerSectionProps) {
   return (
-    <div>
-      <SectionHead>{title}</SectionHead>
-      <div className="mb-2 flex items-center gap-2">
+    <SectionCard title={title}>
+      <div className="flex items-center gap-2">
         <div className="flex-1">
           <Label>Seed</Label>
           <TextInputWithShuffle
@@ -37,10 +36,29 @@ function LayerSection({ title, countMax, config, handlers }: LayerSectionProps) 
           />
         </div>
       </div>
-      <SliderRow label="Density" value={config.count} min={1} max={countMax} onChange={handlers.onCountChange}/>
-      <SliderRow label="Opacity" value={config.opacity} min={0} max={100} unit="%" onChange={handlers.onOpacityChange}/>
-      <SliderRow label="Angle" value={config.angle} min={-180} max={180} onChange={handlers.onAngleChange}/>
-    </div>
+      <SliderRow
+        label="Density"
+        value={config.count}
+        min={1}
+        max={countMax}
+        onChange={handlers.onCountChange}
+      />
+      <SliderRow
+        label="Opacity"
+        value={config.opacity}
+        min={0}
+        max={100}
+        unit="%"
+        onChange={handlers.onOpacityChange}
+      />
+      <SliderRow
+        label="Angle"
+        value={config.angle}
+        min={-180}
+        max={180}
+        onChange={handlers.onAngleChange}
+      />
+    </SectionCard>
   );
 }
 
@@ -48,9 +66,19 @@ export function SurfaceTab() {
   const { band, soft, bandHandlers, softHandlers } = usePlanet();
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <LayerSection title={`Primary ("Shadow") Smudge`} countMax={30} config={band} handlers={bandHandlers}/>
-      <LayerSection title={`Secondary ("Highlight") Smudge`} countMax={10} config={soft} handlers={softHandlers}/>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <LayerSection
+        title={`Primary ("Shadow") Smudge`}
+        countMax={30}
+        config={band}
+        handlers={bandHandlers}
+      />
+      <LayerSection
+        title={`Secondary ("Highlight") Smudge`}
+        countMax={10}
+        config={soft}
+        handlers={softHandlers}
+      />
     </div>
   );
 }
