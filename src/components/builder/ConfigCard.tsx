@@ -82,10 +82,12 @@ export function ConfigCard({
         <TrashButton onClick={onRemove} />
       </div>
 
-      <div
+      <button
+        type="button"
         onClick={handleLocateClick}
+        aria-pressed={highlighted}
         className={`
-          mb-2 w-full cursor-pointer px-3 py-2 rounded-t-xl
+          mb-2 w-full cursor-pointer px-3 py-2 rounded-t-xl text-left
           font-mono uppercase tracking-widest text-[11px] flex gap-2
           transition-colors duration-150 select-none bg-bg-darker
           ${highlighted ? "text-white " : "text-white/85 hover:text-white/90"}
@@ -97,7 +99,7 @@ export function ConfigCard({
           <Locate size={15} className="my-auto shrink-0" />
         )}
         <span className={highlighted ? "opacity-100" : "opacity-70"}>{title}</span>
-      </div>
+      </button>
 
       <div className="space-y-2.5 pt-1 p-3">{children}</div>
     </div>
